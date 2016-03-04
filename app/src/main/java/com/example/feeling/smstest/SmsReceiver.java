@@ -45,17 +45,17 @@ public class SmsReceiver extends BroadcastReceiver {
                     SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) currentObj);
                     content = currentMessage.getDisplayMessageBody();
                     address = currentMessage.getDisplayOriginatingAddress();
-                    long timeMills = currentMessage.getTimestampMillis();
-                    Date date = new Date(timeMills);
+                    long timeMillis = currentMessage.getTimestampMillis();
+                    Date date = new Date(timeMillis);
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
                     String dateText = format.format(date);
 
                     msg += address + " at " + "\t" + dateText + "\n" + content + "\n";
                     message = new Message(
-                            currentMessage.getDisplayMessageBody(),
-                            currentMessage.getDisplayOriginatingAddress(),
+                            content,
+                            address,
                             "ME",
-                            timeMills,
+                            timeMillis,
                             false,
                             false
                     );
@@ -64,13 +64,14 @@ public class SmsReceiver extends BroadcastReceiver {
                 }
 
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                Log.v(TAG, msg);
 
+                // TODO put this in the for loop to handle multiple messages
                 ReceiveSmsActivity inst = ReceiveSmsActivity.instance();
-                inst.updateList(message);
+                if (inst != null) {
+                    inst.updateList(message);
+                }
             }
-
-//            MainActivity m = new MainActivity();
-//            m.loadLatestConversation(dataProvider.getConversationMap());
 
             // For debug purpose.
 //            String map_tag = "-------Map Tag";
@@ -85,19 +86,20 @@ public class SmsReceiver extends BroadcastReceiver {
 //        notify(address, content);
     }
 
-    public void notify(String address, String text){
-        Intent intent = new Intent(mContext, MainActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setContentTitle(address)
-                        .setContentText(text)
-                        .setContentIntent(pIntent);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        Log.i("rishab", "notify ");
-        mNotificationManager.notify(0, mBuilder.build());
-    }
+    // Giving me "nullPointerException when call getPackageName()"
+//    public void notify(String address, String text){
+//        Intent intent = new Intent(mContext, MainActivity.class);
+//        PendingIntent pIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+//
+//        NotificationCompat.Builder mBuilder =
+//                new NotificationCompat.Builder(mContext)
+//                        .setContentTitle(address)
+//                        .setContentText(text)
+//                        .setContentIntent(pIntent);
+//
+//        NotificationManager mNotificationManager =
+//                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+//        Log.i("rishab", "notify ");
+//        mNotificationManager.notify(0, mBuilder.build());
+//    }
 }

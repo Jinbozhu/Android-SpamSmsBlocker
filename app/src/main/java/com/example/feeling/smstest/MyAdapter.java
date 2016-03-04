@@ -52,6 +52,7 @@ public class MyAdapter extends ArrayAdapter<Message> {
         time = (TextView) newView.findViewById(R.id.time);
         msgText.setText(element.getContent());
         contact.setText(element.getSender());
+        // Convert timestamp from long integer to human-readable format.
         long millis = element.getTime();
         String date = DateFormat.format("MMMM dd, yyyy h:mm:ss aa", new Date(millis)).toString();
         time.setText(date);

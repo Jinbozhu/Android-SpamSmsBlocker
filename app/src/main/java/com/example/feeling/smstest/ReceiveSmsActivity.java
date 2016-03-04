@@ -2,6 +2,7 @@ package com.example.feeling.smstest;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -92,5 +93,23 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
     @Override
     public void onClick(View v) {
 
+    }
+
+    /**
+     * From https://www.youtube.com/watch?v=t4Szfni9luM
+     * at 12:00, but not used
+     */
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        try {
+//            Message msg = smsMessageList.get(position);
+//            String content = msg.getContent();
+//            String address = msg.getSender();
+//
+//        }
+//    }
+
+    public void goToCompose(View v) {
+        Intent intent = new Intent(ReceiveSmsActivity.this, ComposeSmsActivity.class);
+        startActivity(intent);
     }
 }

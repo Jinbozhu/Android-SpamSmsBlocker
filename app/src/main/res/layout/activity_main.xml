@@ -38,4 +38,23 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp" />
 
+    <TextView
+        android:id="@+id/notDefaultApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Not default app"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true" />
+
+    <Button
+        android:id="@+id/setDefaultApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set to default app"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/notDefaultApp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="110dp" />
+
 </RelativeLayout>
