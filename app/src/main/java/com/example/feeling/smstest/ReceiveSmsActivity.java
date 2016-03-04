@@ -70,7 +70,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 
         if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
 
-        arrayAdapter.clear();
+        smsMessageList.clear();
         do {
             Message msg = new Message(
                     smsInboxCursor.getString(indexBody),
@@ -86,7 +86,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
     }
 
     public void updateList(final Message msg) {
-        smsMessageList.add(0, msg);
+        smsMessageList.add(msg);
         arrayAdapter.notifyDataSetChanged();
     }
 

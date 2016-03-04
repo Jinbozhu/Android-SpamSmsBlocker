@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsMessage;
@@ -66,6 +67,11 @@ public class SmsReceiver extends BroadcastReceiver {
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                 Log.v(TAG, msg);
 
+                // Get instance of Vibrator from current Context
+                Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 300 milliseconds
+                v.vibrate(300);
+
                 // TODO put this in the for loop to handle multiple messages
                 ReceiveSmsActivity inst = ReceiveSmsActivity.instance();
                 if (inst != null) {
@@ -78,7 +84,6 @@ public class SmsReceiver extends BroadcastReceiver {
 //            for (Map.Entry<String, Conversation> entry : dataProvider.getConversationMap().entrySet()) {
 //                Log.v(map_tag, "" + entry.getValue());
 //            }
-
         } catch (Exception e) {
             Log.e("SMS", "Exception: " + e);
         }
