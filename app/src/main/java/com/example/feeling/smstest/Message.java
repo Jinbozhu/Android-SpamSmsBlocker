@@ -25,11 +25,11 @@ public class Message {
     private String content;
     private String sender;
     private String recipient;
-    private String time;
+    private long time;
     private boolean isRead;
     private boolean isSpam;
 
-    public Message(String content, String sender, String recipient, String time, boolean isRead, boolean isSpam) {
+    public Message(String content, String sender, String recipient, long time, boolean isRead, boolean isSpam) {
         this.content = content;
         this.sender = sender;
         this.recipient = recipient;
@@ -62,7 +62,7 @@ public class Message {
         recipient = recipient;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
@@ -88,6 +88,6 @@ public class Message {
 
     @Override
     public String toString() {
-        return getContent() + "  -  " + getTime().toString();
+        return getContent() + "  -  " + String.valueOf(getTime());
     }
 }

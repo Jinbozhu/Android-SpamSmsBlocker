@@ -39,6 +39,7 @@ public class SmsReceiver extends BroadcastReceiver {
             if (bundle != null) {
                 Object[] sms = (Object[]) bundle.get("pdus");
                 String msg = "";
+                Message message = null;
 
                 for (Object currentObj : sms) {
                     SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) currentObj);
@@ -50,14 +51,14 @@ public class SmsReceiver extends BroadcastReceiver {
                     String dateText = format.format(date);
 
                     msg += address + " at " + "\t" + dateText + "\n" + content + "\n";
-//                    Message message = new Message(
-//                            currentMessage.getDisplayMessageBody(),
-//                            currentMessage.getDisplayOriginatingAddress(),
-//                            "ME",
-//                            time,
-//                            false,
-//                            false
-//                    );
+                    message = new Message(
+                            currentMessage.getDisplayMessageBody(),
+                            currentMessage.getDisplayOriginatingAddress(),
+                            "ME",
+                            timeMills,
+                            false,
+                            false
+                    );
 //                    dataProvider.addMessage(message);
 //                    Log.v(TAG, message.toString());
                 }
@@ -65,7 +66,7 @@ public class SmsReceiver extends BroadcastReceiver {
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 
                 ReceiveSmsActivity inst = ReceiveSmsActivity.instance();
-                inst.updateList(msg);
+                inst.updateList(message);
             }
 
 //            MainActivity m = new MainActivity();

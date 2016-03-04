@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * From https://www.youtube.com/watch?v=t4Szfni9luM
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override

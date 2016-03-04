@@ -1,6 +1,7 @@
 package com.example.feeling.smstest;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,6 +23,7 @@ public class MyAdapter extends ArrayAdapter<Message> {
 
     TextView msgText;
     TextView contact;
+    TextView time;
 
     public MyAdapter(Context _context, int _resource, List<Message> items) {
         super(_context, _resource, items);
@@ -46,8 +49,12 @@ public class MyAdapter extends ArrayAdapter<Message> {
         // Fills in the view.
         msgText = (TextView) newView.findViewById(R.id.latestConversation);
         contact = (TextView) newView.findViewById(R.id.contact);
+        time = (TextView) newView.findViewById(R.id.time);
         msgText.setText(element.getContent());
         contact.setText(element.getSender());
+        long millis = element.getTime();
+        String date = DateFormat.format("MMMM dd, yyyy h:mm:ss aa", new Date(millis)).toString();
+        time.setText(date);
 
         return newView;
     }
