@@ -1,7 +1,5 @@
-package com.example.feeling.smstest;
+package com.example.feeling.spamtextblocker;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,8 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.provider.ContactsContract;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
@@ -136,9 +132,8 @@ public class SmsReceiver extends BroadcastReceiver {
     public static void saveMsgToSystem(Context context, String phone, String msg, long timeMillis) {
         ContentValues values = new ContentValues();
         values.put("date", timeMillis);
-        //阅读状态 
         values.put("read", 0);
-        //1为收 2为发  
+        // 1 for receive, 2 for send  
         values.put("type", 2);
         values.put("address", phone);
         values.put("body", msg);

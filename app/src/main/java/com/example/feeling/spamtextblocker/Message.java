@@ -1,4 +1,4 @@
-package com.example.feeling.smstest;
+package com.example.feeling.spamtextblocker;
 
 /*
 Copyright 2014 Scott Logic Ltd

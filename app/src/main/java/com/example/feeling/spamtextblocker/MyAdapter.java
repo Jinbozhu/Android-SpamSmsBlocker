@@ -1,8 +1,7 @@
-package com.example.feeling.smstest;
+package com.example.feeling.spamtextblocker;
 
 import android.content.Context;
 import android.text.format.DateFormat;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

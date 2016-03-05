@@ -1,4 +1,4 @@
-package com.example.feeling.smstest;
+package com.example.feeling.spamtextblocker;
 
 import android.annotation.TargetApi;
 import android.content.Intent;

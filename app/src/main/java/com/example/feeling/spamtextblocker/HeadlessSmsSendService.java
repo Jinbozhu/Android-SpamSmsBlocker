@@ -1,4 +1,4 @@
-package com.example.feeling.smstest;
+package com.example.feeling.spamtextblocker;
 
 /**
  * Copyright(C) 2013 Brightechno Inc.

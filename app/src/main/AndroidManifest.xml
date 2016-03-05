@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.feeling.smstest">
+    package="com.example.feeling.spamtextblocker">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.feeling.spamtextblocker.MainActivity"
             android:screenOrientation="fullSensor"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
@@ -32,12 +32,12 @@
         </activity>
 
         <activity
-            android:name=".ReceiveSmsActivity"
+            android:name="com.example.feeling.spamtextblocker.ReceiveSmsActivity"
             android:label="ReceiveSmsActivity">
         </activity>
 
         <!-- BroadcastReceiver that listens for incoming SMS messages -->
-        <receiver android:name=".SmsReceiver"
+        <receiver android:name="com.example.feeling.spamtextblocker.SmsReceiver"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
@@ -45,7 +45,7 @@
         </receiver>
 
         <!-- BroadcastReceiver that listens for incoming MMS messages -->
-        <receiver android:name=".MmsReceiver"
+        <receiver android:name="com.example.feeling.spamtextblocker.MmsReceiver"
             android:permission="android.permission.BROADCAST_WAP_PUSH">
             <intent-filter>
                 <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
@@ -54,7 +54,7 @@
         </receiver>
 
         <!-- Activity that allows the user to send new SMS/MMS messages -->
-        <activity android:name=".ComposeSmsActivity" >
+        <activity android:name="com.example.feeling.spamtextblocker.ComposeSmsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SENDTO" />
@@ -68,7 +68,7 @@
         </activity>
 
         <!-- Service that delivers messages from the phone "quick response" -->
-        <service android:name=".HeadlessSmsSendService"
+        <service android:name="com.example.feeling.spamtextblocker.HeadlessSmsSendService"
             android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE"
             android:exported="true" >
             <intent-filter>

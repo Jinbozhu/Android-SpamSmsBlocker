@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.feeling.smstest.MainActivity">
+    tools:context="com.example.feeling.spamtextblocker.MainActivity">
 
     <Button
         android:id="@+id/inboxButton"
