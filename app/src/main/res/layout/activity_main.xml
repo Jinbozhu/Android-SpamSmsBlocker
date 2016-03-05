@@ -16,9 +16,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="goToInbox"
+        android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/composeButton"
-        android:layout_alignStart="@+id/composeButton"
-        android:layout_marginTop="64dp" />
+        android:layout_alignStart="@+id/composeButton" />
 
     <Button
         android:id="@+id/composeButton"
@@ -27,8 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="goToCompose"
-        android:layout_below="@+id/inboxButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="115dp" />
 
     <TextView
         android:id="@+id/notDefaultApp"
@@ -37,7 +37,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Not default app"
         android:layout_gravity="center_horizontal"
-        android:layout_centerVertical="true"
+        android:layout_above="@+id/setDefaultApp"
         android:layout_centerHorizontal="true" />
 
     <Button

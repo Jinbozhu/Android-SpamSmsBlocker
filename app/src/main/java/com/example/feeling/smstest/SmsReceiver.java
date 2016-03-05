@@ -3,8 +3,10 @@ package com.example.feeling.smstest;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.ContactsContract;
@@ -34,6 +36,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
         String address = "";
         String content = "";
+        long timeMillis = 0;
         String time = "";
 
         try {
@@ -46,7 +49,7 @@ public class SmsReceiver extends BroadcastReceiver {
                     SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) currentObj);
                     content = currentMessage.getDisplayMessageBody();
                     address = currentMessage.getDisplayOriginatingAddress();
-                    long timeMillis = currentMessage.getTimestampMillis();
+                    timeMillis = currentMessage.getTimestampMillis();
 
                     Date date = new Date(timeMillis);
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
@@ -73,12 +76,14 @@ public class SmsReceiver extends BroadcastReceiver {
                 v.vibrate(300);
 
                 // TODO put this in the for loop to handle multiple messages
-                ReceiveSmsActivity instance = ReceiveSmsActivity.getInstance();
-                if (instance != null) {
-                    instance.updateList(message);
-                    Log.v("------in smsReceiver", "updateList called...");
-                }
+//                ReceiveSmsActivity instance = ReceiveSmsActivity.getInstance();
+//                if (instance != null) {
+//                    instance.updateList(message);
+//                    Log.v("------in smsReceiver", "updateList called...");
+//                }
             }
+
+//            saveMsgToSystem(context, address, content, timeMillis);
 
             // For debug purpose.
 //            String map_tag = "-------Map Tag";
@@ -108,4 +113,35 @@ public class SmsReceiver extends BroadcastReceiver {
 //        Log.i("rishab", "notify ");
 //        mNotificationManager.notify(0, mBuilder.build());
 //    }
+
+    /**
+     * Write to content://sms/sent works. Even though I want to
+     * write to content://sms/inbox, the message goes to sent box.
+     *
+     * In ReceiveSmsActivity, if query from content://sms/inbox,
+     * I cannot get the latest messages received. But if query from
+     * content://sms/sent, I have access to those newly arrived messages.
+     *
+     * But if I write to and query from both "content://sms",
+     * I'll get all messages from the listView.
+     *
+     * If I don't call this method, the message will not be stored
+     * in the phone, thus not visible in the listView.
+     *
+     * @param context
+     * @param phone
+     * @param msg
+     * @param timeMillis
+     */
+    public static void saveMsgToSystem(Context context, String phone, String msg, long timeMillis) {
+        ContentValues values = new ContentValues();
+        values.put("date", timeMillis);
+        //阅读状态 
+        values.put("read", 0);
+        //1为收 2为发  
+        values.put("type", 2);
+        values.put("address", phone);
+        values.put("body", msg);
+        context.getContentResolver().insert(Uri.parse("content://sms"), values);
+    }
 }

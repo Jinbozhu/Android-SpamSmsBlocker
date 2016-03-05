@@ -53,7 +53,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 
     public void refreshSmsInbox() {
         ContentResolver contentResolver = getContentResolver();
-        Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms/inbox"), null, null, null, null);
+        Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms"), null, null, null, null);
 
         int indexBody = smsInboxCursor.getColumnIndex("body");
         int indexAddress = smsInboxCursor.getColumnIndex("address");
