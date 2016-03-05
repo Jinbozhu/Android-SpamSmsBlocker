@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,13 +23,13 @@ import java.util.List;
  * Created by feeling on 3/3/16.
  */
 public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickListener {
-    private static ReceiveSmsActivity inst;
+    private static ReceiveSmsActivity instance;
     List<Message> smsMessageList;
     ListView smsListView;
     ArrayAdapter arrayAdapter;
 
-    public static ReceiveSmsActivity instance() {
-        return inst;
+    public static ReceiveSmsActivity getInstance() {
+        return instance;
     }
 
     @Override
@@ -88,6 +89,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
     public void updateList(final Message msg) {
         smsMessageList.add(msg);
         arrayAdapter.notifyDataSetChanged();
+        Log.v("------in ReceiActivity", " In updateList() method.");
     }
 
     @Override

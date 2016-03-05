@@ -9,12 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.feeling.smstest.MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SMS APP" />
-
     <Button
         android:id="@+id/inboxButton"
         android:text="Inbox"
@@ -22,7 +16,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="goToInbox"
-        android:layout_below="@+id/textView"
         android:layout_alignLeft="@+id/composeButton"
         android:layout_alignStart="@+id/composeButton"
         android:layout_marginTop="64dp" />
@@ -35,8 +28,7 @@
         android:layout_height="wrap_content"
         android:onClick="goToCompose"
         android:layout_below="@+id/inboxButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/notDefaultApp"
@@ -45,7 +37,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Not default app"
         android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="true" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/setDefaultApp"
@@ -53,8 +46,8 @@
         android:layout_height="wrap_content"
         android:text="Set to default app"
         android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/notDefaultApp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp" />
+        android:layout_marginBottom="88dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

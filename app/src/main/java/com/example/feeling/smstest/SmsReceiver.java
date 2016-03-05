@@ -47,11 +47,13 @@ public class SmsReceiver extends BroadcastReceiver {
                     content = currentMessage.getDisplayMessageBody();
                     address = currentMessage.getDisplayOriginatingAddress();
                     long timeMillis = currentMessage.getTimestampMillis();
+
                     Date date = new Date(timeMillis);
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
                     String dateText = format.format(date);
 
                     msg += address + " at " + "\t" + dateText + "\n" + content + "\n";
+
                     message = new Message(
                             content,
                             address,
@@ -60,8 +62,6 @@ public class SmsReceiver extends BroadcastReceiver {
                             false,
                             false
                     );
-//                    dataProvider.addMessage(message);
-//                    Log.v(TAG, message.toString());
                 }
 
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
@@ -73,9 +73,10 @@ public class SmsReceiver extends BroadcastReceiver {
                 v.vibrate(300);
 
                 // TODO put this in the for loop to handle multiple messages
-                ReceiveSmsActivity inst = ReceiveSmsActivity.instance();
-                if (inst != null) {
-                    inst.updateList(message);
+                ReceiveSmsActivity instance = ReceiveSmsActivity.getInstance();
+                if (instance != null) {
+                    instance.updateList(message);
+                    Log.v("------in smsReceiver", "updateList called...");
                 }
             }
 
