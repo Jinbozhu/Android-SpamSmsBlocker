@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker;
+package com.example.feeling.spamtextblocker.models;
 
 /*
 Copyright 2014 Scott Logic Ltd
@@ -26,14 +26,16 @@ public class Message {
     private String sender;
     private String recipient;
     private long time;
+    private boolean isDelivered;
     private boolean isRead;
     private boolean isSpam;
 
-    public Message(String content, String sender, String recipient, long time, boolean isRead, boolean isSpam) {
+    public Message(String content, String sender, String recipient, long time, boolean isDelivered, boolean isRead, boolean isSpam) {
         this.content = content;
         this.sender = sender;
         this.recipient = recipient;
         this.time = time;
+        this.isDelivered = isDelivered;
         this.isRead = isRead;
         this.isSpam = isSpam;
     }
@@ -84,6 +86,14 @@ public class Message {
 
     public void setIsSpam(boolean isSpam) {
         this.isSpam = isSpam;
+    }
+
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+
+    public void setIsDelivered(boolean isDelivered) {
+        this.isDelivered = isDelivered;
     }
 
     @Override

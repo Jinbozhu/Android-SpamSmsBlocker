@@ -11,6 +11,9 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.feeling.spamtextblocker.database.DatabaseHelper;
+import com.example.feeling.spamtextblocker.database.SmsDatabase;
+import com.example.feeling.spamtextblocker.models.Message;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,8 +23,8 @@ import java.util.Date;
  */
 public class SmsReceiver extends BroadcastReceiver {
     final String TAG = "--------SmsReceiver";
-
     Context mContext;
+    SmsDatabase smsDatabase = new SmsDatabase(mContext);
 
     public SmsReceiver() {
     }
@@ -58,9 +61,14 @@ public class SmsReceiver extends BroadcastReceiver {
                             address,
                             "ME",
                             timeMillis,
+                            true,
                             false,
                             false
                     );
+
+                    // Update message list simutaenouly
+                    ReceiveSmsActivity.smsMessageList.add(0, message);
+                    ReceiveSmsActivity.arrayAdapter.notifyDataSetChanged();
                 }
 
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
@@ -79,7 +87,7 @@ public class SmsReceiver extends BroadcastReceiver {
 //                }
             }
 
-//            saveMsgToSystem(context, address, content, timeMillis);
+            saveMsgToSystem(context, address, content, timeMillis);
 
             // For debug purpose.
 //            String map_tag = "-------Map Tag";
@@ -113,14 +121,14 @@ public class SmsReceiver extends BroadcastReceiver {
     /**
      * Write to content://sms/sent works. Even though I want to
      * write to content://sms/inbox, the message goes to sent box.
-     *
+     * <p>
      * In ReceiveSmsActivity, if query from content://sms/inbox,
      * I cannot get the latest messages received. But if query from
      * content://sms/sent, I have access to those newly arrived messages.
-     *
+     * <p>
      * But if I write to and query from both "content://sms",
      * I'll get all messages from the listView.
-     *
+     * <p>
      * If I don't call this method, the message will not be stored
      * in the phone, thus not visible in the listView.
      *

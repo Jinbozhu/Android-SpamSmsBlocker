@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.feeling.spamtextblocker.models.Message;
+
 import java.util.Date;
 import java.util.List;
 

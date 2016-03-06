@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.feeling.spamtextblocker.models.Message;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +22,9 @@ import java.util.List;
  */
 public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickListener {
     private static ReceiveSmsActivity instance;
-    List<Message> smsMessageList;
+    public static List<Message> smsMessageList;
     ListView smsListView;
-    ArrayAdapter arrayAdapter;
+    public static ArrayAdapter arrayAdapter;
 
     public static ReceiveSmsActivity getInstance() {
         return instance;
@@ -37,6 +39,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
         smsListView = (ListView) findViewById(R.id.SMSList);
         arrayAdapter = new MyAdapter(this, R.layout.conversation_list_element, smsMessageList);
         smsListView.setAdapter(arrayAdapter);
+
 //        smsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -74,6 +77,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
                     smsInboxCursor.getString(indexAddress),
                     "Me",
                     smsInboxCursor.getLong(indexTime),
+                    true,
                     false,
                     false
             );
@@ -85,7 +89,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
     public void updateList(final Message msg) {
         smsMessageList.add(msg);
         arrayAdapter.notifyDataSetChanged();
-        Log.v("------in ReceiActivity", " In updateList() method.");
+        Log.v("------ReceiveActivity", "In updateList() method.");
     }
 
     @Override

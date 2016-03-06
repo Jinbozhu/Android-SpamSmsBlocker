@@ -2,6 +2,7 @@ package com.example.feeling.spamtextblocker;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
@@ -10,15 +11,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.feeling.spamtextblocker.database.DatabaseHelper;
+import com.example.feeling.spamtextblocker.database.SmsDatabase;
+
 /**
  * From https://www.youtube.com/watch?v=t4Szfni9luM
  */
 public class MainActivity extends AppCompatActivity {
+    DatabaseHelper dbHelper;
+    SQLiteDatabase sqLiteDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new DatabaseHelper(this);
+        sqLiteDatabase = dbHelper.getWritableDatabase();
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
