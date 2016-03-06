@@ -1,11 +1,13 @@
 package com.example.feeling.spamtextblocker.models;
 
+import java.util.List;
+
 /**
  * Created by feeling on 3/5/16.
  */
 public class Contact {
     private String name;
-    private String number;
+    private List<String> numbers;
     private boolean isAllowed;
 
     public String getName() {
@@ -16,19 +18,19 @@ public class Contact {
         this.name = name;
     }
 
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
     public boolean isAllowed() {
         return isAllowed;
     }
 
     public void setIsAllowed(boolean isAllowed) {
         this.isAllowed = isAllowed;
+    }
+
+    public List<String> getNumbers() {
+        return numbers;
+    }
+
+    public void setNumbers(List<String> numbers) {
+        this.numbers = numbers;
     }
 }

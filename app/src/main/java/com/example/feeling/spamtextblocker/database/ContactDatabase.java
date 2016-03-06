@@ -46,7 +46,8 @@ public class ContactDatabase extends DatabaseHelper {
 
         ContentValues values = new ContentValues();
         values.put(COL_NAME, contact.getName());
-        values.put(COL_NUMBER, contact.getNumber());
+        // When we insert a contact, there is only one number for the contact
+        values.put(COL_NUMBER, contact.getNumbers().get(0));
         values.put(COL_IS_ALLOWED, contact.isAllowed());
 
 //        return insert(values);

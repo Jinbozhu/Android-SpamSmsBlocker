@@ -1,36 +1,53 @@
 package com.example.feeling.spamtextblocker;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.ContactsContract;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.database.SmsDatabase;
+import com.example.feeling.spamtextblocker.models.Contact;
 import com.example.feeling.spamtextblocker.models.Message;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by feeling on 2/29/16.
  */
 public class SmsReceiver extends BroadcastReceiver {
     final String TAG = "--------SmsReceiver";
-    Context mContext;
-    SmsDatabase smsDatabase = new SmsDatabase(mContext);
+//    SmsDatabase smsDatabase = new SmsDatabase(mContext);
+    List<String> blockList;
+    List<String> allowList;
 
     public SmsReceiver() {
+        blockList = new ArrayList<>();
+        allowList = new ArrayList<>();
+
+    }
+
+    private void loadBlockListFromDataBase(Context context) {
+
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        loadBlockListFromDataBase(context);
+        loadAllowListFromPhone(context);
+
         Bundle bundle = intent.getExtras();
 
         String address = "";
@@ -99,6 +116,27 @@ public class SmsReceiver extends BroadcastReceiver {
         }
 
 //        notify(address, content);
+    }
+
+    // Modified from https://www.youtube.com/watch?v=g4_1UOFNLEY
+    private void loadAllowListFromPhone(Context context) {
+        ContentResolver resolver = context.getContentResolver();
+        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        if (cursor == null) return;
+
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+            if (phoneCursor == null) return;
+            while (phoneCursor.moveToNext()) {
+                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                Log.i("phoneNumber in contacts", phoneNumber);
+                allowList.add(phoneNumber);
+            }
+        }
     }
 
     // Giving me "nullPointerException when call getPackageName()"
