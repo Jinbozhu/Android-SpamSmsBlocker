@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.models.Message;
 
 import java.util.ArrayList;
@@ -22,6 +24,10 @@ import java.util.List;
  */
 public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickListener {
     private static ReceiveSmsActivity instance;
+
+    DatabaseHelper dbHelper;
+    SQLiteDatabase sqLiteDatabase;
+
     public static List<Message> smsMessageList;
     ListView smsListView;
     public static ArrayAdapter arrayAdapter;
@@ -35,6 +41,9 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_sms);
 
+        dbHelper = new DatabaseHelper(this);
+        sqLiteDatabase = dbHelper.getReadableDatabase();
+
         smsMessageList = new ArrayList<>();
         smsListView = (ListView) findViewById(R.id.SMSList);
         arrayAdapter = new MyAdapter(this, R.layout.conversation_list_element, smsMessageList);
@@ -47,12 +56,14 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 //            }
 //        });
 
-        refreshSmsInbox();
+//        refreshSmsInbox();
+        loadSmsFromDatabase();
     }
 
-    public void refreshSmsInbox() {
+    public void loadSmsFromDatabase() {
         ContentResolver contentResolver = getContentResolver();
         Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms"), null, null, null, null);
+        if (smsInboxCursor == null || smsInboxCursor.getCount() <= 0) return;
 
         int indexBody = smsInboxCursor.getColumnIndex("body");
         int indexAddress = smsInboxCursor.getColumnIndex("address");
@@ -73,8 +84,8 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
         smsMessageList.clear();
         do {
             Message msg = new Message(
-                    smsInboxCursor.getString(indexBody),
                     smsInboxCursor.getString(indexAddress),
+                    smsInboxCursor.getString(indexBody),
                     "Me",
                     smsInboxCursor.getLong(indexTime),
                     true,
@@ -84,7 +95,45 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
             smsMessageList.add(msg);
         } while (smsInboxCursor.moveToNext());
         arrayAdapter.notifyDataSetChanged();
+
+        smsInboxCursor.close();
     }
+
+//    public void refreshSmsInbox() {
+//        ContentResolver contentResolver = getContentResolver();
+//        Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms"), null, null, null, null);
+//
+//        int indexBody = smsInboxCursor.getColumnIndex("body");
+//        int indexAddress = smsInboxCursor.getColumnIndex("address");
+//        int indexTime = smsInboxCursor.getColumnIndex("date");
+////        String date = smsInboxCursor.getString(indexTime);
+////        Long timestamp = Long.parseLong(date);
+////        Calendar calendar = Calendar.getInstance();
+////        calendar.setTimeInMillis(timestamp);
+////        Date finalDate = calendar.getTime();
+//
+////        Date date = new Date(timeMillis);
+////        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
+////        String dateText = format.format(date);
+//
+//
+//        if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
+//
+//        smsMessageList.clear();
+//        do {
+//            Message msg = new Message(
+//                    smsInboxCursor.getString(indexBody),
+//                    smsInboxCursor.getString(indexAddress),
+//                    "Me",
+//                    smsInboxCursor.getLong(indexTime),
+//                    true,
+//                    false,
+//                    false
+//            );
+//            smsMessageList.add(msg);
+//        } while (smsInboxCursor.moveToNext());
+//        arrayAdapter.notifyDataSetChanged();
+//    }
 
     public void updateList(final Message msg) {
         smsMessageList.add(msg);

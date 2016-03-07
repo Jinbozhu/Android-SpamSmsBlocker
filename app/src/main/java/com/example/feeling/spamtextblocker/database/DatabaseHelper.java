@@ -42,7 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 //    public long insert(ContentValues values) {
-//        SQLiteDatabase database = this.getReadableDatabase();
+//        SQLiteDatabase database = this.getWritableDatabase();
 //
 //        long id = getWritableDatabase().insert(getTableName(), null, values);
 //        Log.i(TAG, "insert into [" + getTableName() + "], id = [ " + id + "]");

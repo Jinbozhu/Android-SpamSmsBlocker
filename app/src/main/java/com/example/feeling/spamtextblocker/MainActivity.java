@@ -18,16 +18,10 @@ import com.example.feeling.spamtextblocker.database.SmsDatabase;
  * From https://www.youtube.com/watch?v=t4Szfni9luM
  */
 public class MainActivity extends AppCompatActivity {
-    DatabaseHelper dbHelper;
-    SQLiteDatabase sqLiteDatabase;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        dbHelper = new DatabaseHelper(this);
-        sqLiteDatabase = dbHelper.getWritableDatabase();
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

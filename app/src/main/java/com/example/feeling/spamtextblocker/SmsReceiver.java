@@ -30,7 +30,6 @@ import java.util.List;
  */
 public class SmsReceiver extends BroadcastReceiver {
     final String TAG = "--------SmsReceiver";
-    //    SmsDatabase smsDatabase = new SmsDatabase(mContext);
     DatabaseHelper dbHelper;
     SQLiteDatabase sqLiteDatabase;
 
@@ -40,7 +39,6 @@ public class SmsReceiver extends BroadcastReceiver {
     public SmsReceiver() {
         blockList = new ArrayList<>();
         allowList = new ArrayList<>();
-
     }
 
     private void loadBlockListFromDataBase(Context context) {
@@ -81,8 +79,8 @@ public class SmsReceiver extends BroadcastReceiver {
                     msg += sender + " at " + "\t" + dateText + "\n" + content + "\n";
 
                     message = new Message(
-                            content,
                             sender,
+                            content,
                             "ME",
                             timeMillis,
                             true,
@@ -90,10 +88,17 @@ public class SmsReceiver extends BroadcastReceiver {
                             false
                     );
 
-                    insertSmsToDataBase(context, sender, content, "ME", timeMillis, true, false, false);
+//                    long res = SmsDatabase.insertSms(message);
+//                    if (res != -1) {
+//                        Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(context, "Insert failed.", Toast.LENGTH_SHORT).show();
+//                    }
+
+                    insertSmsToDataBase(context, message);
                     saveMsgToSystem(context, sender, content, timeMillis);
 
-                    // Update message list simutaenouly
+                    // Update message list simultaneously
                     ReceiveSmsActivity.smsMessageList.add(0, message);
                     ReceiveSmsActivity.arrayAdapter.notifyDataSetChanged();
                 }
@@ -106,21 +111,15 @@ public class SmsReceiver extends BroadcastReceiver {
                 // Vibrate for 300 milliseconds
                 v.vibrate(300);
             }
-
-
-            // For debug purpose.
-//            String map_tag = "-------Map Tag";
-//            for (Map.Entry<String, Conversation> entry : dataProvider.getConversationMap().entrySet()) {
-//                Log.v(map_tag, "" + entry.getValue());
-//            }
         } catch (Exception e) {
-            Log.e("SMS", "Exception: " + e);
+            Log.e("SmsReceiver", "Exception: " + e);
         }
 
 //        notify(sender, content);
     }
 
-    // Modified from https://www.youtube.com/watch?v=g4_1UOFNLEY
+    // References: https://www.youtube.com/watch?v=g4_1UOFNLEY
+    // http://www.higherpass.com/android/tutorials/working-with-android-contacts/
     private void loadAllowListFromPhone(Context context) {
         ContentResolver resolver = context.getContentResolver();
         Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
@@ -144,16 +143,16 @@ public class SmsReceiver extends BroadcastReceiver {
         cursor.close();
     }
 
-    private boolean insertSmsToDataBase(Context context, String sender, String content, String recipient,
-                                     long time, boolean isDelivered, boolean isRead, boolean isSpam) {
+    private boolean insertSmsToDataBase(Context context, Message message) {
         ContentValues values = new ContentValues();
-        values.put("sender", sender);
-        values.put("content", content);
-        values.put("recipient", recipient);
-        values.put("time", time);
-        values.put("isDelivered", isDelivered);
-        values.put("isRead", isRead);
-        values.put("isSpam", isSpam);
+        values.put("sender", message.getSender());
+        values.put("content", message.getContent());
+        values.put("recipient", message.getRecipient());
+        values.put("time", message.getTime());
+        values.put("isDelivered", message.isDelivered());
+        values.put("isRead", message.isRead());
+        values.put("isSpam", message.isSpam());
+
         long res = sqLiteDatabase.insert(SmsDatabase.TABLE_NAME, null, values);
         boolean flag = res != -1;
         if (flag) {

@@ -22,17 +22,18 @@ import java.util.Date;
  * Created by sdavies on 09/01/2014.
  */
 public class Message {
-    private String content;
     private String sender;
+    private String content;
     private String recipient;
     private long time;
     private boolean isDelivered;
     private boolean isRead;
     private boolean isSpam;
 
-    public Message(String content, String sender, String recipient, long time, boolean isDelivered, boolean isRead, boolean isSpam) {
-        this.content = content;
+    public Message(String sender, String content, String recipient, long time,
+                   boolean isDelivered, boolean isRead, boolean isSpam) {
         this.sender = sender;
+        this.content = content;
         this.recipient = recipient;
         this.time = time;
         this.isDelivered = isDelivered;

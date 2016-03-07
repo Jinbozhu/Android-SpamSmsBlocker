@@ -2,6 +2,8 @@ package com.example.feeling.spamtextblocker.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.models.Message;
 
@@ -37,8 +39,13 @@ public class SmsDatabase extends DatabaseHelper {
 
     public static final String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
+//    DatabaseHelper dbHelper;
+//    public static SQLiteDatabase sqLiteDatabase;
+
     public SmsDatabase(Context context) {
         super(context);
+//        dbHelper = new DatabaseHelper(context);
+//        sqLiteDatabase = dbHelper.getWritableDatabase();
     }
 
 //    @Override
@@ -46,23 +53,24 @@ public class SmsDatabase extends DatabaseHelper {
         return TABLE_NAME;
     }
 
-    public long insertSms(Message msg) {
-        if (msg == null) {
-            throw new IllegalArgumentException("msg == null");
-        }
-
-        ContentValues values = new ContentValues();
-        values.put(COL_SENDER, msg.getSender());
-        values.put(COL_CONTENT, msg.getContent());
-        values.put(COL_RECIPIENT, msg.getRecipient());
-        values.put(COL_TIME, msg.getTime());
-        values.put(COL_IS_DELIVERED, msg.isDelivered());
-        values.put(COL_IS_READ, msg.isRead());
-        values.put(COL_IS_SPAM, msg.isSpam());
-
-//        return insert(values);
-        return 1;
-    }
+//    public static long insertSms(Message msg) {
+//        if (msg == null) {
+//            throw new IllegalArgumentException("msg == null");
+//        }
+//
+//        ContentValues values = new ContentValues();
+//        values.put(COL_SENDER, msg.getSender());
+//        values.put(COL_CONTENT, msg.getContent());
+//        values.put(COL_RECIPIENT, msg.getRecipient());
+//        values.put(COL_TIME, msg.getTime());
+//        values.put(COL_IS_DELIVERED, msg.isDelivered());
+//        values.put(COL_IS_READ, msg.isRead());
+//        values.put(COL_IS_SPAM, msg.isSpam());
+//
+//        return sqLiteDatabase.insert(SmsDatabase.TABLE_NAME, null, values);
+//
+////        return insert(values);
+//    }
 
     public List<Message> getAllowedMessage() {
         List<Message> allowedMessage = new ArrayList<>();
