@@ -17,7 +17,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        SQLiteDatabase database = this.getReadableDatabase();
     }
 
     @Override
@@ -43,6 +42,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 //    public long insert(ContentValues values) {
+//        SQLiteDatabase database = this.getReadableDatabase();
+//
 //        long id = getWritableDatabase().insert(getTableName(), null, values);
 //        Log.i(TAG, "insert into [" + getTableName() + "], id = [ " + id + "]");
 //        return id;

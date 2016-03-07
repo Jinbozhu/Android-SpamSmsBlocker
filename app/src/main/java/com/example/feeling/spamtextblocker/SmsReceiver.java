@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -29,7 +30,10 @@ import java.util.List;
  */
 public class SmsReceiver extends BroadcastReceiver {
     final String TAG = "--------SmsReceiver";
-//    SmsDatabase smsDatabase = new SmsDatabase(mContext);
+    //    SmsDatabase smsDatabase = new SmsDatabase(mContext);
+    DatabaseHelper dbHelper;
+    SQLiteDatabase sqLiteDatabase;
+
     List<String> blockList;
     List<String> allowList;
 
@@ -45,12 +49,15 @@ public class SmsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        dbHelper = new DatabaseHelper(context);
+        sqLiteDatabase = dbHelper.getWritableDatabase();
+
         loadBlockListFromDataBase(context);
         loadAllowListFromPhone(context);
 
         Bundle bundle = intent.getExtras();
 
-        String address = "";
+        String sender = "";
         String content = "";
         long timeMillis = 0;
         String time = "";
@@ -64,24 +71,27 @@ public class SmsReceiver extends BroadcastReceiver {
                 for (Object currentObj : sms) {
                     SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) currentObj);
                     content = currentMessage.getDisplayMessageBody();
-                    address = currentMessage.getDisplayOriginatingAddress();
+                    sender = currentMessage.getDisplayOriginatingAddress();
                     timeMillis = currentMessage.getTimestampMillis();
 
                     Date date = new Date(timeMillis);
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
                     String dateText = format.format(date);
 
-                    msg += address + " at " + "\t" + dateText + "\n" + content + "\n";
+                    msg += sender + " at " + "\t" + dateText + "\n" + content + "\n";
 
                     message = new Message(
                             content,
-                            address,
+                            sender,
                             "ME",
                             timeMillis,
                             true,
                             false,
                             false
                     );
+
+                    insertSmsToDataBase(context, sender, content, "ME", timeMillis, true, false, false);
+                    saveMsgToSystem(context, sender, content, timeMillis);
 
                     // Update message list simutaenouly
                     ReceiveSmsActivity.smsMessageList.add(0, message);
@@ -95,16 +105,8 @@ public class SmsReceiver extends BroadcastReceiver {
                 Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 // Vibrate for 300 milliseconds
                 v.vibrate(300);
-
-                // TODO put this in the for loop to handle multiple messages
-//                ReceiveSmsActivity instance = ReceiveSmsActivity.getInstance();
-//                if (instance != null) {
-//                    instance.updateList(message);
-//                    Log.v("------in smsReceiver", "updateList called...");
-//                }
             }
 
-            saveMsgToSystem(context, address, content, timeMillis);
 
             // For debug purpose.
 //            String map_tag = "-------Map Tag";
@@ -115,14 +117,14 @@ public class SmsReceiver extends BroadcastReceiver {
             Log.e("SMS", "Exception: " + e);
         }
 
-//        notify(address, content);
+//        notify(sender, content);
     }
 
     // Modified from https://www.youtube.com/watch?v=g4_1UOFNLEY
     private void loadAllowListFromPhone(Context context) {
         ContentResolver resolver = context.getContentResolver();
         Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-        if (cursor == null) return;
+        if (cursor == null || cursor.getCount() <= 0) return;
 
         while (cursor.moveToNext()) {
             String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
@@ -130,23 +132,46 @@ public class SmsReceiver extends BroadcastReceiver {
 
             Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                     null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
-            if (phoneCursor == null) return;
+            if (phoneCursor == null || phoneCursor.getCount() <= 0) return;
             while (phoneCursor.moveToNext()) {
                 String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 Log.i("phoneNumber in contacts", phoneNumber);
                 allowList.add(phoneNumber);
             }
+            phoneCursor.close();
         }
+
+        cursor.close();
+    }
+
+    private boolean insertSmsToDataBase(Context context, String sender, String content, String recipient,
+                                     long time, boolean isDelivered, boolean isRead, boolean isSpam) {
+        ContentValues values = new ContentValues();
+        values.put("sender", sender);
+        values.put("content", content);
+        values.put("recipient", recipient);
+        values.put("time", time);
+        values.put("isDelivered", isDelivered);
+        values.put("isRead", isRead);
+        values.put("isSpam", isSpam);
+        long res = sqLiteDatabase.insert(SmsDatabase.TABLE_NAME, null, values);
+        boolean flag = res != -1;
+        if (flag) {
+            Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Insert failed.", Toast.LENGTH_SHORT).show();
+        }
+        return flag;
     }
 
     // Giving me "nullPointerException when call getPackageName()"
-//    public void notify(String address, String text){
+//    public void notify(String sender, String text){
 //        Intent intent = new Intent(mContext, MainActivity.class);
 //        PendingIntent pIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
 //
 //        NotificationCompat.Builder mBuilder =
 //                new NotificationCompat.Builder(mContext)
-//                        .setContentTitle(address)
+//                        .setContentTitle(sender)
 //                        .setContentText(text)
 //                        .setContentIntent(pIntent);
 //
@@ -159,14 +184,14 @@ public class SmsReceiver extends BroadcastReceiver {
     /**
      * Write to content://sms/sent works. Even though I want to
      * write to content://sms/inbox, the message goes to sent box.
-     * <p>
+     * <p/>
      * In ReceiveSmsActivity, if query from content://sms/inbox,
      * I cannot get the latest messages received. But if query from
      * content://sms/sent, I have access to those newly arrived messages.
-     * <p>
+     * <p/>
      * But if I write to and query from both "content://sms",
      * I'll get all messages from the listView.
-     * <p>
+     * <p/>
      * If I don't call this method, the message will not be stored
      * in the phone, thus not visible in the listView.
      *
