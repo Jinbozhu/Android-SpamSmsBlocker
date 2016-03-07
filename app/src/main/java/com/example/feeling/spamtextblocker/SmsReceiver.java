@@ -95,7 +95,8 @@ public class SmsReceiver extends BroadcastReceiver {
 //                        Toast.makeText(context, "Insert failed.", Toast.LENGTH_SHORT).show();
 //                    }
 
-                    insertSmsToDataBase(context, message);
+//                    insertSmsToDataBase(context, message);
+                    dbHelper.insertSms(message);
                     saveMsgToSystem(context, sender, content, timeMillis);
 
                     // Update message list simultaneously
