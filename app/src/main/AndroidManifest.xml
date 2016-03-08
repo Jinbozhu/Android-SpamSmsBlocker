@@ -20,6 +20,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name="com.example.feeling.spamtextblocker.MainActivity"
             android:screenOrientation="fullSensor"
@@ -35,6 +36,13 @@
             android:name="com.example.feeling.spamtextblocker.ReceiveSmsActivity"
             android:label="ReceiveSmsActivity">
         </activity>
+
+        <activity
+            android:name="com.example.feeling.spamtextblocker.ConversationActivity"
+            android:parentActivityName="com.example.feeling.spamtextblocker.ReceiveSmsActivity"
+            android:theme="@android:style/Theme.Holo.Light">  -- cause nullPointerException when call getActionBar() without it.
+        </activity>
+
 
         <!-- BroadcastReceiver that listens for incoming SMS messages -->
         <receiver android:name="com.example.feeling.spamtextblocker.SmsReceiver"

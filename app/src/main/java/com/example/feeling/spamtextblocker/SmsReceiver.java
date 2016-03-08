@@ -31,7 +31,7 @@ import java.util.List;
 public class SmsReceiver extends BroadcastReceiver {
     final String TAG = "--------SmsReceiver";
     DatabaseHelper dbHelper;
-    SQLiteDatabase sqLiteDatabase;
+    SQLiteDatabase db;
 
     List<String> blockList;
     List<String> allowList;
@@ -48,7 +48,7 @@ public class SmsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         dbHelper = new DatabaseHelper(context);
-        sqLiteDatabase = dbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
 
         loadBlockListFromDataBase(context);
         loadAllowListFromPhone(context);
@@ -88,19 +88,18 @@ public class SmsReceiver extends BroadcastReceiver {
                             false
                     );
 
-//                    long res = SmsDatabase.insertSms(message);
-//                    if (res != -1) {
-//                        Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(context, "Insert failed.", Toast.LENGTH_SHORT).show();
-//                    }
-
 //                    insertSmsToDataBase(context, message);
-                    dbHelper.insertSms(message);
+                    long res = dbHelper.insertSms(message);
+                    if (res != -1) {
+                        Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Insert failed.", Toast.LENGTH_SHORT).show();
+                    }
+
                     saveMsgToSystem(context, sender, content, timeMillis);
 
                     // Update message list simultaneously
-                    ReceiveSmsActivity.smsMessageList.add(0, message);
+                    ReceiveSmsActivity.smsList.add(0, message);
                     ReceiveSmsActivity.arrayAdapter.notifyDataSetChanged();
                 }
 
@@ -115,6 +114,7 @@ public class SmsReceiver extends BroadcastReceiver {
         } catch (Exception e) {
             Log.e("SmsReceiver", "Exception: " + e);
         }
+
 
 //        notify(sender, content);
     }
@@ -154,7 +154,7 @@ public class SmsReceiver extends BroadcastReceiver {
         values.put("isRead", message.isRead());
         values.put("isSpam", message.isSpam());
 
-        long res = sqLiteDatabase.insert(SmsDatabase.TABLE_NAME, null, values);
+        long res = db.insert(SmsDatabase.TABLE_NAME, null, values);
         boolean flag = res != -1;
         if (flag) {
             Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();

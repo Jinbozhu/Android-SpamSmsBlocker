@@ -23,18 +23,12 @@ import java.util.List;
  * Created by feeling on 3/3/16.
  */
 public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickListener {
-    private static ReceiveSmsActivity instance;
-
     DatabaseHelper dbHelper;
-    SQLiteDatabase sqLiteDatabase;
+    SQLiteDatabase db;
 
-    public static List<Message> smsMessageList;
-    ListView smsListView;
+    public static List<Message> smsList;
     public static ArrayAdapter arrayAdapter;
-
-    public static ReceiveSmsActivity getInstance() {
-        return instance;
-    }
+    ListView smsListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +36,19 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
         setContentView(R.layout.activity_receive_sms);
 
         dbHelper = new DatabaseHelper(this);
-        sqLiteDatabase = dbHelper.getReadableDatabase();
 
-        smsMessageList = new ArrayList<>();
+        smsList = new ArrayList<>();
         smsListView = (ListView) findViewById(R.id.SMSList);
-        arrayAdapter = new MyAdapter(this, R.layout.conversation_list_element, smsMessageList);
+        arrayAdapter = new MyAdapter(this, R.layout.conversation_list_element, smsList);
         smsListView.setAdapter(arrayAdapter);
+        smsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ReceiveSmsActivity.this, ConversationActivity.class);
+
+                startActivity(intent);
+            }
+        });
 
 //        smsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -61,42 +62,12 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
     }
 
     public void loadSmsFromDatabase() {
-        ContentResolver contentResolver = getContentResolver();
-        Cursor smsInboxCursor = contentResolver.query(Uri.parse("content://sms"), null, null, null, null);
-        if (smsInboxCursor == null || smsInboxCursor.getCount() <= 0) return;
-
-        int indexBody = smsInboxCursor.getColumnIndex("body");
-        int indexAddress = smsInboxCursor.getColumnIndex("address");
-        int indexTime = smsInboxCursor.getColumnIndex("date");
-//        String date = smsInboxCursor.getString(indexTime);
-//        Long timestamp = Long.parseLong(date);
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(timestamp);
-//        Date finalDate = calendar.getTime();
-
-//        Date date = new Date(timeMillis);
-//        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
-//        String dateText = format.format(date);
-
-
-        if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
-
-        smsMessageList.clear();
-        do {
-            Message msg = new Message(
-                    smsInboxCursor.getString(indexAddress),
-                    smsInboxCursor.getString(indexBody),
-                    "Me",
-                    smsInboxCursor.getLong(indexTime),
-                    true,
-                    false,
-                    false
-            );
-            smsMessageList.add(msg);
-        } while (smsInboxCursor.moveToNext());
+        smsList.clear();
+        List<Message> allSms = dbHelper.getAllSms();
+        for (int i = allSms.size() - 1; i >= 0; i--) {
+            smsList.add(allSms.get(i));
+        }
         arrayAdapter.notifyDataSetChanged();
-
-        smsInboxCursor.close();
     }
 
 //    public void refreshSmsInbox() {
@@ -119,7 +90,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 //
 //        if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
 //
-//        smsMessageList.clear();
+//        smsList.clear();
 //        do {
 //            Message msg = new Message(
 //                    smsInboxCursor.getString(indexBody),
@@ -130,13 +101,13 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 //                    false,
 //                    false
 //            );
-//            smsMessageList.add(msg);
+//            smsList.add(msg);
 //        } while (smsInboxCursor.moveToNext());
 //        arrayAdapter.notifyDataSetChanged();
 //    }
 
     public void updateList(final Message msg) {
-        smsMessageList.add(msg);
+        smsList.add(msg);
         arrayAdapter.notifyDataSetChanged();
         Log.v("------ReceiveActivity", "In updateList() method.");
     }
@@ -152,7 +123,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
      */
 //    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //        try {
-//            Message msg = smsMessageList.get(position);
+//            Message msg = smsList.get(position);
 //            String content = msg.getContent();
 //            String address = msg.getSender();
 //

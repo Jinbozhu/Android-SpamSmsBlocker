@@ -2,6 +2,7 @@ package com.example.feeling.spamtextblocker.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -83,6 +84,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(SMS_COL_CONTENT, msg.getContent());
         values.put(SMS_COL_RECIPIENT, msg.getRecipient());
         values.put(SMS_COL_TIME, msg.getTime());
+        // seems that we can directly put true (1) and false (0) into it
         values.put(SMS_COL_IS_DELIVERED, msg.isDelivered());
         values.put(SMS_COL_IS_READ, msg.isRead());
         values.put(SMS_COL_IS_SPAM, msg.isSpam());
@@ -91,11 +93,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<Message> getAllSms() {
-        List<Message> sms = new ArrayList<>();
+        List<Message> allSms = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_SMS;
+
         SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                String sender = cursor.getString(cursor.getColumnIndex(SMS_COL_SENDER));
+                String content = cursor.getString(cursor.getColumnIndex(SMS_COL_CONTENT));
+                String recipient = cursor.getString(cursor.getColumnIndex(SMS_COL_RECIPIENT));
+                long time = cursor.getInt(cursor.getColumnIndex(SMS_COL_TIME));
+                boolean isDelivered = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_DELIVERED)) == 1;
+                boolean isRead = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_READ)) == 1;
+                boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
 
+                Message msg = new Message(sender, content, recipient, time, isDelivered, isRead, isSpam);
+                Log.i(TAG, msg.toString());
+                allSms.add(msg);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
 
-        return sms;
+        return allSms;
     }
 
     // close database
