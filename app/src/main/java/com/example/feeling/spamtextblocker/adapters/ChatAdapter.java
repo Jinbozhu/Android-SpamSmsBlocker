@@ -2,6 +2,7 @@ package com.example.feeling.spamtextblocker.adapters;
 
 import android.content.Context;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ public class ChatAdapter extends ArrayAdapter<Message> {
     int resource;
     Context context;
 
-    TextView msgText;
+    TextView content;
     TextView time;
 
     public ChatAdapter(Context _context, int _resource, List<Message> items) {
@@ -34,7 +35,7 @@ public class ChatAdapter extends ArrayAdapter<Message> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LinearLayout newView;
-        Message element = getItem(position);
+        Message msg = getItem(position);
 
         // Inflate a new view if necessary.
         if (convertView == null) {
@@ -47,13 +48,24 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         }
 
         // Fills in the view.
-        msgText = (TextView) newView.findViewById(R.id.chat_content);
+        content = (TextView) newView.findViewById(R.id.chat_content);
         time = (TextView) newView.findViewById(R.id.chat_time);
-        msgText.setText(element.getContent());
+        content.setText(msg.getContent());
         // Convert timestamp from long integer to human-readable format.
-        long millis = element.getTime();
+        long millis = msg.getTime();
         String date = DateFormat.format("h:mm aa", new Date(millis)).toString();
         time.setText(date);
+
+        LinearLayout singleMessageContainer
+                = (LinearLayout) newView.findViewById(R.id.singleMessage);
+
+        if ("ME".equals(msg.getRecipient())) {
+            newView.setGravity(Gravity.END);
+            singleMessageContainer.setBackgroundResource(R.drawable.right_bubble_green);
+        } else {
+            newView.setGravity(Gravity.START);
+            singleMessageContainer.setBackgroundResource(R.drawable.left_bubble_gray);
+        }
 
         return newView;
     }
