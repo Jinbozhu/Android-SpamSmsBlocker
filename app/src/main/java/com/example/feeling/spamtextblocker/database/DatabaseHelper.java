@@ -100,6 +100,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
+                long id = cursor.getInt(cursor.getColumnIndex(COL_ID));
                 String sender = cursor.getString(cursor.getColumnIndex(SMS_COL_SENDER));
                 String content = cursor.getString(cursor.getColumnIndex(SMS_COL_CONTENT));
                 String recipient = cursor.getString(cursor.getColumnIndex(SMS_COL_RECIPIENT));
@@ -108,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 boolean isRead = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_READ)) == 1;
                 boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
 
-                Message msg = new Message(sender, content, recipient, time, isDelivered, isRead, isSpam);
+                Message msg = new Message(id, sender, content, recipient, time, isDelivered, isRead, isSpam);
                 Log.i(TAG, msg.toString());
                 allSms.add(msg);
             } while (cursor.moveToNext());

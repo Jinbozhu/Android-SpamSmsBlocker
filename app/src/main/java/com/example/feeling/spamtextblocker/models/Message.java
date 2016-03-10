@@ -22,6 +22,7 @@ import java.util.Date;
  * Created by sdavies on 09/01/2014.
  */
 public class Message {
+    private long id;
     private String sender;
     private String content;
     private String recipient;
@@ -30,8 +31,9 @@ public class Message {
     private boolean isRead;
     private boolean isSpam;
 
-    public Message(String sender, String content, String recipient, long time,
+    public Message(long id, String sender, String content, String recipient, long time,
                    boolean isDelivered, boolean isRead, boolean isSpam) {
+        this.id = id;
         this.sender = sender;
         this.content = content;
         this.recipient = recipient;
@@ -43,6 +45,18 @@ public class Message {
 
     public String getContent() {
         return content;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public void setContent(String content) {

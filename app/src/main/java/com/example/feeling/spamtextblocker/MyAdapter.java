@@ -55,7 +55,7 @@ public class MyAdapter extends ArrayAdapter<Message> {
         contact.setText(element.getSender());
         // Convert timestamp from long integer to human-readable format.
         long millis = element.getTime();
-        String date = DateFormat.format("MMM dd, h:mm aa", new Date(millis)).toString();
+        String date = DateFormat.format("MMM dd, h:mm", new Date(millis)).toString();
         time.setText(date);
 
         return newView;

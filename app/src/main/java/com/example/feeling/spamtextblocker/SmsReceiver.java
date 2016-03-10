@@ -79,6 +79,7 @@ public class SmsReceiver extends BroadcastReceiver {
                     msg += sender + " at " + "\t" + dateText + "\n" + content + "\n";
 
                     message = new Message(
+                            0,
                             sender,
                             content,
                             "ME",
@@ -89,12 +90,20 @@ public class SmsReceiver extends BroadcastReceiver {
                     );
 
 //                    insertSmsToDataBase(context, message);
-                    long res = dbHelper.insertSms(message);
-                    if (res != -1) {
+                    // Insert operation returns the id of the inserted row.
+                    // If it fails, it will return -1.
+                    long id = dbHelper.insertSms(message);
+                    if (id != -1) {
                         Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(context, "Insert failed.", Toast.LENGTH_SHORT).show();
                     }
+
+                    // Assign the id in the database to the "id" field
+                    // so that when I want to delete a message, I can
+                    // find it using the id of the message.
+                    message.setId(id);
+                    Toast.makeText(context, String.valueOf(message.getId()), Toast.LENGTH_SHORT).show();
 
                     saveMsgToSystem(context, sender, content, timeMillis);
 
