@@ -1,11 +1,8 @@
 package com.example.feeling.spamtextblocker;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.feeling.spamtextblocker.adapters.ConversationAdapter;
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.models.Message;
 
@@ -39,13 +37,19 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 
         smsList = new ArrayList<>();
         smsListView = (ListView) findViewById(R.id.SMSList);
-        arrayAdapter = new MyAdapter(this, R.layout.conversation_list_element, smsList);
+        arrayAdapter = new ConversationAdapter(this, R.layout.conversation_list_element, smsList);
         smsListView.setAdapter(arrayAdapter);
         smsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ReceiveSmsActivity.this, ConversationActivity.class);
-
+                Intent intent = new Intent(ReceiveSmsActivity.this, ChatActivity.class);
+                // Get the message object at this position
+                Message msg = (Message) parent.getItemAtPosition(position);
+                String contactNumber = msg.getSender();
+                if ("ME".equals(contactNumber)) {
+                    contactNumber = msg.getRecipient();
+                }
+                intent.putExtra("contactNumber", contactNumber);
                 startActivity(intent);
             }
         });

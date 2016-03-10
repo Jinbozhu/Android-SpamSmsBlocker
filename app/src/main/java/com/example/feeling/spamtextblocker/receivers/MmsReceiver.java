@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker;
+package com.example.feeling.spamtextblocker.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

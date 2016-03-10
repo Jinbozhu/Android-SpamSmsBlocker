@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker;
+package com.example.feeling.spamtextblocker.adapters;
 
 import android.content.Context;
 import android.text.format.DateFormat;
@@ -9,24 +9,23 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.feeling.spamtextblocker.R;
 import com.example.feeling.spamtextblocker.models.Message;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by shobhit on 1/24/16.
- * Copied from Prof. Luca class code
+ * Created by feeling on 3/9/16.
  */
-public class MyAdapter extends ArrayAdapter<Message> {
+public class ChatAdapter extends ArrayAdapter<Message> {
     int resource;
     Context context;
 
     TextView msgText;
-    TextView contact;
     TextView time;
 
-    public MyAdapter(Context _context, int _resource, List<Message> items) {
+    public ChatAdapter(Context _context, int _resource, List<Message> items) {
         super(_context, _resource, items);
         resource = _resource;
         context = _context;
@@ -48,14 +47,12 @@ public class MyAdapter extends ArrayAdapter<Message> {
         }
 
         // Fills in the view.
-        msgText = (TextView) newView.findViewById(R.id.latestConversation);
-        contact = (TextView) newView.findViewById(R.id.contact);
-        time = (TextView) newView.findViewById(R.id.time);
+        msgText = (TextView) newView.findViewById(R.id.chat_content);
+        time = (TextView) newView.findViewById(R.id.chat_time);
         msgText.setText(element.getContent());
-        contact.setText(element.getSender());
         // Convert timestamp from long integer to human-readable format.
         long millis = element.getTime();
-        String date = DateFormat.format("MMM dd, h:mm", new Date(millis)).toString();
+        String date = DateFormat.format("h:mm aa", new Date(millis)).toString();
         time.setText(date);
 
         return newView;

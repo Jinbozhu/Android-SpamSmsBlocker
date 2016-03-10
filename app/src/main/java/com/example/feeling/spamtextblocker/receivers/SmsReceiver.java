@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker;
+package com.example.feeling.spamtextblocker.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -15,6 +15,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.feeling.spamtextblocker.ReceiveSmsActivity;
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.database.SmsDatabase;
 import com.example.feeling.spamtextblocker.models.Contact;
@@ -79,7 +80,7 @@ public class SmsReceiver extends BroadcastReceiver {
                     msg += sender + " at " + "\t" + dateText + "\n" + content + "\n";
 
                     message = new Message(
-                            0,
+                            0,              // temp id
                             sender,
                             content,
                             "ME",
@@ -90,6 +91,7 @@ public class SmsReceiver extends BroadcastReceiver {
                     );
 
 //                    insertSmsToDataBase(context, message);
+
                     // Insert operation returns the id of the inserted row.
                     // If it fails, it will return -1.
                     long id = dbHelper.insertSms(message);
@@ -103,7 +105,6 @@ public class SmsReceiver extends BroadcastReceiver {
                     // so that when I want to delete a message, I can
                     // find it using the id of the message.
                     message.setId(id);
-                    Toast.makeText(context, String.valueOf(message.getId()), Toast.LENGTH_SHORT).show();
 
                     saveMsgToSystem(context, sender, content, timeMillis);
 

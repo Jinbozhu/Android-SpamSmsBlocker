@@ -93,8 +93,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<Message> getAllSms() {
-        List<Message> allSms = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_NAME_SMS;
+        return fetchFromDatabase(selectQuery);
+    }
+
+    public List<Message> getLatestSmsForEachContact() {
+        List<Message> msg = new ArrayList<>();
+
+        return msg;
+    }
+
+    public List<Message> getAllSmsForCertainContact(String name) {
+        List<Message> msg = new ArrayList<>();
+
+        return msg;
+    }
+
+    public List<Message> getAllSmsForCertainNumber(String phoneNumber) {
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_SMS + " WHERE " +
+                SMS_COL_SENDER + " = " + phoneNumber + " OR " +
+                SMS_COL_RECIPIENT  + " = " + phoneNumber +
+                " ORDER BY " + SMS_COL_TIME;
+
+        return fetchFromDatabase(selectQuery);
+    }
+
+    private List<Message> fetchFromDatabase(String selectQuery) {
+        List<Message> sms = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -110,26 +135,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
 
                 Message msg = new Message(id, sender, content, recipient, time, isDelivered, isRead, isSpam);
-                Log.i(TAG, msg.toString());
-                allSms.add(msg);
+//                Log.i(TAG, msg.toString());
+                sms.add(msg);
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
 
-        return allSms;
-    }
-
-    public List<Message> getLatestSmsForEachContact() {
-        List<Message> msg = new ArrayList<>();
-
-        return msg;
-    }
-
-    public List<Message> getAllSmsForCertainContact(String name) {
-        List<Message> msg = new ArrayList<>();
-
-        return msg;
+        return sms;
     }
 
     // close database
