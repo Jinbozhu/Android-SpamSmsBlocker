@@ -119,6 +119,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return allSms;
     }
 
+    public List<Message> getLatestSmsForEachContact() {
+        List<Message> msg = new ArrayList<>();
+
+        return msg;
+    }
+
+    public List<Message> getAllSmsForCertainContact(String name) {
+        List<Message> msg = new ArrayList<>();
+
+        return msg;
+    }
+
     // close database
     public void closeDB() {
         SQLiteDatabase db = this.getReadableDatabase();
