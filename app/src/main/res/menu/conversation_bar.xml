@@ -2,10 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_back"
-        android:icon="@drawable/ic_action_back"
-        android:title="Back"
-        app:showAsAction="ifRoom" />
+    <item android:id="@+id/add_to_contact"
+        android:title="Add Contact"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/add_to_blocklist"
+        android:title="Add To Blocklist"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/delete_thread"
+        android:title="Delete Thread"
+        app:showAsAction="never" />
 
     <item android:id="@+id/action_search"
         android:icon="@drawable/ic_action_search"

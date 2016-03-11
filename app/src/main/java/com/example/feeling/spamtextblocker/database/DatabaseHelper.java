@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.models.Message;
 
@@ -23,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME_SMS = "sms";
     public static final String TABLE_NAME_CONTACT = "contacts";
+    public static final String TABLE_NAME_PHONE = "phone";
 
     // Common column name
     public static final String COL_ID = "id";
@@ -49,15 +51,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Table contacts
     public static final String CONTACT_COL_NAME = "name";
-    public static final String CONTACT_COL_NUMBER = "number";
     public static final String CONTACT_COL_IS_ALLOWED = "isAllowed";
 
     public static final String CREATE_TABLE_CONTACT =
             "CREATE TABLE " + TABLE_NAME_CONTACT + " (" +
                     COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                     CONTACT_COL_NAME + " TEXT, " +
-                    CONTACT_COL_NUMBER + " TEXT, " +
                     CONTACT_COL_IS_ALLOWED + " INTEGER" + ")";
+
+    // Table phone
+    public static final String PHONE_COL_NUMBER = "number";
+    public static final String PHONE_COL_CONTACT_ID = "contact_id";
+
+    public static final String CREATE_TABLE_PHONE =
+            "CREATE TABLE " + TABLE_NAME_PHONE + " (" +
+                    COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    PHONE_COL_NUMBER + " TEXT, " +
+                    PHONE_COL_CONTACT_ID + " INTEGER, " +
+                    "FOREIGN KEY(" + PHONE_COL_CONTACT_ID + ")" +
+                    " REFERENCES " + TABLE_NAME_CONTACT +
+                    "(" + COL_ID + ")" + ")";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -65,17 +78,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.i("onCreate", "creating contact...");
         db.execSQL(CREATE_TABLE_CONTACT);
+        Log.i("onCreate", "creating sms...");
         db.execSQL(CREATE_TABLE_SMS);
+        Log.i("onCreate", "creating phone...");
+        db.execSQL(CREATE_TABLE_PHONE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_CONTACT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_SMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_PHONE);
         onCreate(db);
     }
 
+    // sms table operations
     public long insertSms(Message msg) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -109,10 +128,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return msg;
     }
 
+    public List<Message> getLastSmsForCertainNumber() {
+        List<Message> sms = new ArrayList<>();
+        List<String> numbers = new ArrayList<>();
+        numbers.addAll(getPhone());
+
+        for (String phoneNumber : numbers) {
+            String selectQuery = "SELECT * FROM " + TABLE_NAME_SMS + " WHERE " +
+                    SMS_COL_SENDER + " = " + phoneNumber + " OR " +
+                    SMS_COL_RECIPIENT + " = " + phoneNumber +
+                    " ORDER BY " + SMS_COL_TIME + " DESC LIMIT 1";
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                long id = cursor.getInt(cursor.getColumnIndex(COL_ID));
+                String sender = cursor.getString(cursor.getColumnIndex(SMS_COL_SENDER));
+                String content = cursor.getString(cursor.getColumnIndex(SMS_COL_CONTENT));
+                String recipient = cursor.getString(cursor.getColumnIndex(SMS_COL_RECIPIENT));
+                long time = cursor.getInt(cursor.getColumnIndex(SMS_COL_TIME));
+                boolean isDelivered = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_DELIVERED)) == 1;
+                boolean isRead = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_READ)) == 1;
+                boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
+
+                Message msg = new Message(id, sender, content, recipient, time, isDelivered, isRead, isSpam);
+                sms.add(msg);
+            }
+            cursor.close();
+            closeDB();
+        }
+
+        return sms;
+    }
+
     public List<Message> getAllSmsForCertainNumber(String phoneNumber) {
         String selectQuery = "SELECT * FROM " + TABLE_NAME_SMS + " WHERE " +
                 SMS_COL_SENDER + " = " + phoneNumber + " OR " +
-                SMS_COL_RECIPIENT  + " = " + phoneNumber +
+                SMS_COL_RECIPIENT + " = " + phoneNumber +
                 " ORDER BY " + SMS_COL_TIME;
 
         return fetchFromDatabase(selectQuery);
@@ -140,9 +191,77 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+        closeDB();
 
         return sms;
+    }
+
+    public long deleteSms(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME_SMS, COL_ID, new String[]{String.valueOf(id)});
+    }
+
+    // Phone table operations
+    // Check if the phone table has the given number or not
+    public boolean containsPhone(String phoneNumber) {
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
+                PHONE_COL_NUMBER + " = " + phoneNumber;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Log.i(TAG, String.valueOf(cursor.getCount()));
+        boolean res = cursor.getCount() != 0;
+        cursor.close();
+        closeDB();
+        return res;
+    }
+
+    public long insertPhone(String phoneNumber) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PHONE_COL_NUMBER, phoneNumber);
+
+        return db.insert(TABLE_NAME_PHONE, null, values);
+    }
+
+    public List<String> getPhone() {
+        List<String> numbers = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                String number = cursor.getString(cursor.getColumnIndex(PHONE_COL_NUMBER));
+                numbers.add(number);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        closeDB();
+
+        return numbers;
+    }
+
+    // Table contact operations
+    public void updateContact(long id, String name, boolean isAllowed) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(CONTACT_COL_NAME, name);
+        values.put(CONTACT_COL_IS_ALLOWED, isAllowed);
+
+        db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ", new String[]{String.valueOf(id)});
+    }
+
+    public long insertContact(String name, boolean isAllowed) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(CONTACT_COL_NAME, name);
+        values.put(CONTACT_COL_IS_ALLOWED, isAllowed);
+
+        return db.insert(TABLE_NAME_CONTACT, null, values);
     }
 
     // close database

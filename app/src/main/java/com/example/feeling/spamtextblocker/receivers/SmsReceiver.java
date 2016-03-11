@@ -92,6 +92,9 @@ public class SmsReceiver extends BroadcastReceiver {
 
 //                    insertSmsToDataBase(context, message);
 
+//                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+//                    dbHelper.onUpgrade(db, 1,2);
+
                     // Insert operation returns the id of the inserted row.
                     // If it fails, it will return -1.
                     long id = dbHelper.insertSms(message);
@@ -105,12 +108,19 @@ public class SmsReceiver extends BroadcastReceiver {
                     // so that when I want to delete a message, I can
                     // find it using the id of the message.
                     message.setId(id);
+                    Toast.makeText(context, String.valueOf(message.getId()), Toast.LENGTH_SHORT).show();
 
                     saveMsgToSystem(context, sender, content, timeMillis);
 
                     // Update message list simultaneously
                     ReceiveSmsActivity.smsList.add(0, message);
                     ReceiveSmsActivity.arrayAdapter.notifyDataSetChanged();
+
+                    if (!dbHelper.containsPhone(sender)) {
+                        Log.i(TAG, "in smsReceiver containsphone");
+                        dbHelper.insertPhone(sender);
+                    }
+                    dbHelper.closeDB();         // need to close DB
                 }
 
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
@@ -124,7 +134,6 @@ public class SmsReceiver extends BroadcastReceiver {
         } catch (Exception e) {
             Log.e("SmsReceiver", "Exception: " + e);
         }
-
 
 //        notify(sender, content);
     }

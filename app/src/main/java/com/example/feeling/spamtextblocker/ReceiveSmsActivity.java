@@ -67,7 +67,8 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 
     public void loadSmsFromDatabase() {
         smsList.clear();
-        List<Message> allSms = dbHelper.getAllSms();
+        List<Message> allSms = dbHelper.getLastSmsForCertainNumber();
+
         for (int i = allSms.size() - 1; i >= 0; i--) {
             smsList.add(allSms.get(i));
         }

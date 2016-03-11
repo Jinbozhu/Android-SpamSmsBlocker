@@ -59,9 +59,12 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         LinearLayout singleMessageContainer
                 = (LinearLayout) newView.findViewById(R.id.singleMessage);
 
-        if ("ME".equals(msg.getRecipient())) {
+        if ("ME".equals(msg.getRecipient()) && msg.isDelivered()) {
             newView.setGravity(Gravity.END);
             singleMessageContainer.setBackgroundResource(R.drawable.right_bubble_green);
+        } else if ("ME".equals(msg.getRecipient()) && !msg.isDelivered()) {
+            newView.setGravity(Gravity.END);
+            singleMessageContainer.setBackgroundResource(R.drawable.right_bubble_gray);
         } else {
             newView.setGravity(Gravity.START);
             singleMessageContainer.setBackgroundResource(R.drawable.left_bubble_gray);
