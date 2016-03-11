@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.adapters.ChatAdapter;
 import com.example.feeling.spamtextblocker.adapters.ConversationAdapter;
@@ -24,10 +26,10 @@ import java.util.List;
  * Created by feeling on 3/9/16.
  */
 public class ChatActivity extends AppCompatActivity {
-    public static String LOG_TAG = "ChatActivity";
+    public static final String TAG = "ChatActivity";
 
-    public ChatAdapter chatAdapter;
-    public List<Message> arrayList;
+    public static ChatAdapter chatAdapter;
+    public static List<Message> chatArrayList;
     ListView myListView;
     EditText chatBox;
     Button sendButton;
@@ -45,8 +47,8 @@ public class ChatActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
-        arrayList = new ArrayList<>();
-        chatAdapter = new ChatAdapter(this, R.layout.chat_list_elemnt, arrayList);
+        chatArrayList = new ArrayList<>();
+        chatAdapter = new ChatAdapter(this, R.layout.chat_list_elemnt, chatArrayList);
         myListView = (ListView) findViewById(R.id.listViewChat);
         myListView.setAdapter(chatAdapter);
 
@@ -68,11 +70,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void loadSms(String contactNumber) {
-        arrayList.clear();
+        chatArrayList.clear();
         List<Message> sms = dbHelper.getAllSmsForCertainNumber(contactNumber);
         for (Message msg : sms) {
             Log.i("loadSms in chat", msg.toString());
-            arrayList.add(msg);
+            chatArrayList.add(msg);
         }
         chatAdapter.notifyDataSetChanged();
     }
@@ -101,16 +103,46 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void send() {
-        final String message = chatBox.getText().toString();
+        String sms = chatBox.getText().toString();
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(contactNumber, null, sms, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         long time = System.currentTimeMillis();
+        Message message = new Message(0, "ME", sms, contactNumber, time, false, true, false);
 
-        /**
-         * Add the posted message to arrayList, and call notifyDataSetChanged()
-         * on ArrayAdapter, then it will be shown on the screen immediately.
-         */
-        arrayList.add(new Message(0, "ME", message, contactNumber, time, true, true, false));
-        chatAdapter.notifyDataSetChanged();
+        // Insert operation returns the id of the inserted row.
+        // If it fails, it will return -1.
+        long id = dbHelper.insertSms(message);
 
+        // Assign the id in the database to the "id" field
+        // so that when I want to delete a message, I can
+        // find it using the id of the message.
+        message.setId(id);
+
+        // Update message list in conversation thread
+        // and in chat room simultaneously
+        ReceiveSmsActivity.convArrayList.add(0, message);
+        ReceiveSmsActivity.convAdapter.notifyDataSetChanged();
+        ChatActivity.chatArrayList.add(message);
+        ChatActivity.chatAdapter.notifyDataSetChanged();
+
+        if (!dbHelper.containsPhone(contactNumber)) {
+            Log.i(TAG, "in ChatActivity");
+            dbHelper.insertPhone(contactNumber);
+        }
+        dbHelper.closeDB();         // need to close DB
+//        long time = System.currentTimeMillis();
+
+//        /**
+//         * Add the posted message to chatArrayList, and call notifyDataSetChanged()
+//         * on ArrayAdapter, then it will be shown on the screen immediately.
+//         */
+//        chatArrayList.add(new Message(0, "ME", message, contactNumber, time, true, true, false));
+//        chatAdapter.notifyDataSetChanged();
     }
 
     /**

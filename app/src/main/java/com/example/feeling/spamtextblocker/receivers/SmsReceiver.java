@@ -15,6 +15,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.feeling.spamtextblocker.ChatActivity;
 import com.example.feeling.spamtextblocker.ReceiveSmsActivity;
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.database.SmsDatabase;
@@ -112,9 +113,12 @@ public class SmsReceiver extends BroadcastReceiver {
 
                     saveMsgToSystem(context, sender, content, timeMillis);
 
-                    // Update message list simultaneously
-                    ReceiveSmsActivity.smsList.add(0, message);
-                    ReceiveSmsActivity.arrayAdapter.notifyDataSetChanged();
+                    // Update message list in conversation thread
+                    // and in chat room simultaneously
+                    ReceiveSmsActivity.convArrayList.add(0, message);
+                    ReceiveSmsActivity.convAdapter.notifyDataSetChanged();
+                    ChatActivity.chatArrayList.add(message);
+                    ChatActivity.chatAdapter.notifyDataSetChanged();
 
                     if (!dbHelper.containsPhone(sender)) {
                         Log.i(TAG, "in smsReceiver containsphone");

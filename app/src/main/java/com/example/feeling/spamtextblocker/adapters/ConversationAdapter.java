@@ -53,7 +53,12 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
         contact = (TextView) newView.findViewById(R.id.contact);
         time = (TextView) newView.findViewById(R.id.time);
         msgText.setText(element.getContent());
-        contact.setText(element.getSender());
+        String sender = element.getSender();
+        if ("ME".equals(sender)) {
+            contact.setText(element.getRecipient());
+        } else {
+            contact.setText(sender);
+        }
         // Convert timestamp from long integer to human-readable format.
         long millis = element.getTime();
         String date = DateFormat.format("MMM dd, h:mm aa", new Date(millis)).toString();

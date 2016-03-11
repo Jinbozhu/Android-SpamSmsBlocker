@@ -24,8 +24,8 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
     DatabaseHelper dbHelper;
     SQLiteDatabase db;
 
-    public static List<Message> smsList;
-    public static ArrayAdapter arrayAdapter;
+    public static List<Message> convArrayList;
+    public static ArrayAdapter convAdapter;
     ListView smsListView;
 
     @Override
@@ -35,10 +35,10 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 
         dbHelper = new DatabaseHelper(this);
 
-        smsList = new ArrayList<>();
+        convArrayList = new ArrayList<>();
         smsListView = (ListView) findViewById(R.id.SMSList);
-        arrayAdapter = new ConversationAdapter(this, R.layout.conversation_list_element, smsList);
-        smsListView.setAdapter(arrayAdapter);
+        convAdapter = new ConversationAdapter(this, R.layout.conversation_list_element, convArrayList);
+        smsListView.setAdapter(convAdapter);
         smsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -66,13 +66,13 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
     }
 
     public void loadSmsFromDatabase() {
-        smsList.clear();
+        convArrayList.clear();
         List<Message> allSms = dbHelper.getLastSmsForCertainNumber();
 
         for (int i = allSms.size() - 1; i >= 0; i--) {
-            smsList.add(allSms.get(i));
+            convArrayList.add(allSms.get(i));
         }
-        arrayAdapter.notifyDataSetChanged();
+        convAdapter.notifyDataSetChanged();
     }
 
 //    public void refreshSmsInbox() {
@@ -95,7 +95,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 //
 //        if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
 //
-//        smsList.clear();
+//        convArrayList.clear();
 //        do {
 //            Message msg = new Message(
 //                    smsInboxCursor.getString(indexBody),
@@ -106,14 +106,14 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
 //                    false,
 //                    false
 //            );
-//            smsList.add(msg);
+//            convArrayList.add(msg);
 //        } while (smsInboxCursor.moveToNext());
-//        arrayAdapter.notifyDataSetChanged();
+//        convAdapter.notifyDataSetChanged();
 //    }
 
     public void updateList(final Message msg) {
-        smsList.add(msg);
-        arrayAdapter.notifyDataSetChanged();
+        convArrayList.add(msg);
+        convAdapter.notifyDataSetChanged();
         Log.v("------ReceiveActivity", "In updateList() method.");
     }
 
@@ -128,7 +128,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
      */
 //    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //        try {
-//            Message msg = smsList.get(position);
+//            Message msg = convArrayList.get(position);
 //            String content = msg.getContent();
 //            String address = msg.getSender();
 //
