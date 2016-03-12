@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
         // need to initialize charArrayList and chatAdapter
         // or there will be nullPointerException in SmsReceiver
         ChatActivity.chatArrayList = new ArrayList<>();
-        ChatActivity.chatAdapter = new ChatAdapter(getApplicationContext(), R.layout.chat_list_elemnt, ChatActivity.chatArrayList);
+        ChatActivity.chatAdapter = new ChatAdapter(getApplicationContext(),
+                R.layout.chat_list_elemnt, ChatActivity.chatArrayList);
 
         dbHelper = new DatabaseHelper(this);
         dbHelper.getPhone();

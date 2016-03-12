@@ -135,9 +135,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         for (String phoneNumber : numbers) {
             String selectQuery = "SELECT * FROM " + TABLE_NAME_SMS + " WHERE " +
-                    SMS_COL_SENDER + " = " + phoneNumber + " OR " +
-                    SMS_COL_RECIPIENT + " = " + phoneNumber +
-                    " ORDER BY " + SMS_COL_TIME + " DESC LIMIT 1";
+                    SMS_COL_SENDER + " = '" + phoneNumber + "' OR " +
+                    SMS_COL_RECIPIENT + " = '" + phoneNumber +
+                    "' ORDER BY " + SMS_COL_TIME + " DESC LIMIT 1";
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -162,9 +162,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public List<Message> getAllSmsForCertainNumber(String phoneNumber) {
         String selectQuery = "SELECT * FROM " + TABLE_NAME_SMS + " WHERE " +
-                SMS_COL_SENDER + " = " + phoneNumber + " OR " +
-                SMS_COL_RECIPIENT + " = " + phoneNumber +
-                " ORDER BY " + SMS_COL_TIME;
+                SMS_COL_SENDER + " = '" + phoneNumber + "' OR " +
+                SMS_COL_RECIPIENT + " = '" + phoneNumber +
+                "' ORDER BY " + SMS_COL_TIME;
 
         return fetchFromDatabase(selectQuery);
     }
@@ -205,7 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Check if the phone table has the given number or not
     public boolean containsPhone(String phoneNumber) {
         String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
-                PHONE_COL_NUMBER + " = " + phoneNumber;
+                PHONE_COL_NUMBER + " = " + "'" + phoneNumber + "'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

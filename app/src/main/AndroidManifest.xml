@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.example.feeling.spamtextblocker.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="fullSensor"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
@@ -34,17 +34,17 @@
         </activity>
 
         <activity
-            android:name="com.example.feeling.spamtextblocker.ReceiveSmsActivity"
-            android:label="ReceiveSmsActivity">
+            android:name=".ReceiveSmsActivity"
+            android:parentActivityName="com.example.feeling.spamtextblocker.MainActivity">
         </activity>
 
         <activity
-            android:name="com.example.feeling.spamtextblocker.ChatActivity"
+            android:name=".ChatActivity"
             android:parentActivityName="com.example.feeling.spamtextblocker.ReceiveSmsActivity">
         </activity>
 
         <activity
-            android:name="com.example.feeling.spamtextblocker.ConversationActivity"
+            android:name=".ConversationActivity"
             android:parentActivityName="com.example.feeling.spamtextblocker.ReceiveSmsActivity"
             android:theme="@android:style/Theme.Holo.Light">  -- cause nullPointerException when call getActionBar() without it.
         </activity>
@@ -68,7 +68,7 @@
         </receiver>
 
         <!-- Activity that allows the user to send new SMS/MMS messages -->
-        <activity android:name="com.example.feeling.spamtextblocker.ComposeSmsActivity" >
+        <activity android:name=".ComposeSmsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SENDTO" />
@@ -82,7 +82,7 @@
         </activity>
 
         <!-- Service that delivers messages from the phone "quick response" -->
-        <service android:name="com.example.feeling.spamtextblocker.HeadlessSmsSendService"
+        <service android:name=".HeadlessSmsSendService"
             android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE"
             android:exported="true" >
             <intent-filter>
