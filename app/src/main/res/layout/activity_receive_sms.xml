@@ -7,10 +7,9 @@
     <ListView
         android:id="@+id/SMSList"
         android:layout_width="match_parent"
-        android:layout_height="279dp"
-        android:layout_weight="1.01"
-        android:layout_above="@+id/composeButton"
-        android:layout_alignParentTop="true">
+        android:layout_height="450dp"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/composeButton">
     </ListView>
 
     <Button

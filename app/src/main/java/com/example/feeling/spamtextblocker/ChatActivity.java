@@ -45,7 +45,6 @@ public class ChatActivity extends AppCompatActivity {
         setTitle(contactNumber);
         setContentView(R.layout.activity_chat);
 
-
         dbHelper = new DatabaseHelper(this);
 
         chatArrayList = new ArrayList<>();

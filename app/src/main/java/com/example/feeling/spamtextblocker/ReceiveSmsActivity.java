@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Created by feeling on 3/3/16.
  */
-public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickListener {
+public class ReceiveSmsActivity extends AppCompatActivity implements AdapterView.OnClickListener {
     DatabaseHelper dbHelper;
     SQLiteDatabase db;
 
@@ -31,6 +32,7 @@ public class ReceiveSmsActivity extends Activity implements AdapterView.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Message");
         setContentView(R.layout.activity_receive_sms);
 
         dbHelper = new DatabaseHelper(this);
