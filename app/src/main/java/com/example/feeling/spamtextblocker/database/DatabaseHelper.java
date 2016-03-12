@@ -196,9 +196,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sms;
     }
 
+    /**
+     * Delete a message from sms table.
+     *
+     * @param id is the id of the message to be deleted.
+     * @return the id of the message that is deleted.
+     * Return -1 is deletion fails.
+     */
     public long deleteSms(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME_SMS, COL_ID, new String[]{String.valueOf(id)});
+        String selection = COL_ID + " = ?";
+        return db.delete(TABLE_NAME_SMS, selection, new String[]{String.valueOf(id)});
     }
 
     // Phone table operations

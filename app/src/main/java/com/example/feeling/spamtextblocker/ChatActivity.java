@@ -1,5 +1,7 @@
 package com.example.feeling.spamtextblocker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -8,7 +10,12 @@ import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -30,7 +37,7 @@ public class ChatActivity extends AppCompatActivity {
 
     public static ChatAdapter chatAdapter;
     public static ArrayList<Message> chatArrayList;
-    ListView myListView;
+    ListView chatListView;
     EditText chatBox;
     Button sendButton;
 
@@ -51,8 +58,9 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter = new ChatAdapter(getApplicationContext(),
                 R.layout.chat_list_elemnt, chatArrayList);
 
-        myListView = (ListView) findViewById(R.id.listViewChat);
-        myListView.setAdapter(chatAdapter);
+        chatListView = (ListView) findViewById(R.id.listViewChat);
+        chatListView.setAdapter(chatAdapter);
+        registerForContextMenu(chatListView);
 
         sendButton = (Button) findViewById(R.id.sendButtonChat);
         sendButton.setEnabled(false);
@@ -76,6 +84,67 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.chat_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.delete:
+                deleteMessage(info.position);
+                return true;
+            case R.id.add_contact:
+                addContact(info.position);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    // Modified from
+    // https://github.com/commonsguy/cw-android/tree/master/Database/Constants/src/com/commonsware/android/constants
+    private void deleteMessage(final int index) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete)
+                .setMessage("Message will be deleted.")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                processDelete(index);
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // ignore, just dismiss
+                            }
+                        })
+                .show();
+    }
+
+    private void processDelete(int index) {
+        long id = chatArrayList.get(index).getId();
+        long deleteRes = dbHelper.deleteSms(id);
+        if (deleteRes == -1) {
+            Log.i(TAG, "Delete failed.");
+        } else {
+            Log.i(TAG, "Delete successful.");
+        }
+        chatArrayList.remove(index);
+        chatAdapter.notifyDataSetChanged();
+    }
+
+    private void addContact(int id) {
+
+    }
     private void loadSms(String contactNumber) {
         chatArrayList.clear();
         List<Message> sms = dbHelper.getAllSmsForCertainNumber(contactNumber);
