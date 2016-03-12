@@ -11,17 +11,35 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.feeling.spamtextblocker.adapters.ChatAdapter;
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.database.SmsDatabase;
+
+import java.util.ArrayList;
 
 /**
  * From https://www.youtube.com/watch?v=t4Szfni9luM
  */
 public class MainActivity extends AppCompatActivity {
+    DatabaseHelper dbHelper;
+//    SQLiteDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // need to initialize charArrayList and chatAdapter
+        // or there will be nullPointerException in SmsReceiver
+        ChatActivity.chatArrayList = new ArrayList<>();
+        ChatActivity.chatAdapter = new ChatAdapter(getApplicationContext(), R.layout.chat_list_elemnt, ChatActivity.chatArrayList);
+
+        dbHelper = new DatabaseHelper(this);
+        dbHelper.getPhone();
+//        dbHelper = new DatabaseHelper(this);
+//        db = dbHelper.getWritableDatabase();
+//        dbHelper.onUpgrade(db, 1, 2);
+//        dbHelper.closeDB();
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

@@ -186,7 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
 
                 Message msg = new Message(id, sender, content, recipient, time, isDelivered, isRead, isSpam);
-//                Log.i(TAG, msg.toString());
+                Log.i("fetchFromDatabase", msg.toString());
                 sms.add(msg);
             } while (cursor.moveToNext());
         }
@@ -235,6 +235,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 String number = cursor.getString(cursor.getColumnIndex(PHONE_COL_NUMBER));
                 numbers.add(number);
+                Log.i("getPhone", number);
             } while (cursor.moveToNext());
         }
         cursor.close();

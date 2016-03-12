@@ -29,7 +29,7 @@ public class ChatActivity extends AppCompatActivity {
     public static final String TAG = "ChatActivity";
 
     public static ChatAdapter chatAdapter;
-    public static List<Message> chatArrayList;
+    public static ArrayList<Message> chatArrayList;
     ListView myListView;
     EditText chatBox;
     Button sendButton;
@@ -48,7 +48,8 @@ public class ChatActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
 
         chatArrayList = new ArrayList<>();
-        chatAdapter = new ChatAdapter(this, R.layout.chat_list_elemnt, chatArrayList);
+        chatAdapter = new ChatAdapter(getApplicationContext(), R.layout.chat_list_elemnt, chatArrayList);
+
         myListView = (ListView) findViewById(R.id.listViewChat);
         myListView.setAdapter(chatAdapter);
 
@@ -57,9 +58,13 @@ public class ChatActivity extends AppCompatActivity {
         chatBox = (EditText) findViewById(R.id.editTextChat);
         chatBox.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {
                 checkMessageLength();
@@ -67,6 +72,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         loadSms(contactNumber);
+
     }
 
     private void loadSms(String contactNumber) {

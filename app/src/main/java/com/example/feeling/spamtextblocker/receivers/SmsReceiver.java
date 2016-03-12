@@ -31,7 +31,7 @@ import java.util.List;
  * Created by feeling on 2/29/16.
  */
 public class SmsReceiver extends BroadcastReceiver {
-    final String TAG = "--------SmsReceiver";
+    final String TAG = "SmsReceiver";
     DatabaseHelper dbHelper;
     SQLiteDatabase db;
 
@@ -52,8 +52,8 @@ public class SmsReceiver extends BroadcastReceiver {
         dbHelper = new DatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
 
-        loadBlockListFromDataBase(context);
-        loadAllowListFromPhone(context);
+//        loadBlockListFromDataBase(context);
+//        loadAllowListFromPhone(context);
 
         Bundle bundle = intent.getExtras();
 
@@ -99,6 +99,12 @@ public class SmsReceiver extends BroadcastReceiver {
                     // Insert operation returns the id of the inserted row.
                     // If it fails, it will return -1.
                     long id = dbHelper.insertSms(message);
+                    Log.i(TAG, "Write to SMS!!");
+                    List<Message> list = dbHelper.getLastSmsForCertainNumber();
+                    for (Message s : list) {
+                        Log.i(TAG, s.toString());
+                    }
+
                     if (id != -1) {
                         Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();
                     } else {
@@ -111,7 +117,9 @@ public class SmsReceiver extends BroadcastReceiver {
                     message.setId(id);
                     Toast.makeText(context, String.valueOf(message.getId()), Toast.LENGTH_SHORT).show();
 
-                    saveMsgToSystem(context, sender, content, timeMillis);
+                    Log.i(TAG, "Print message " + message.toString());
+
+//                    saveMsgToSystem(context, sender, content, timeMillis);
 
                     // Update message list in conversation thread
                     // and in chat room simultaneously
@@ -119,13 +127,14 @@ public class SmsReceiver extends BroadcastReceiver {
                     ReceiveSmsActivity.convAdapter.notifyDataSetChanged();
                     ChatActivity.chatArrayList.add(message);
                     ChatActivity.chatAdapter.notifyDataSetChanged();
+                    Log.i(TAG, "Logging my sender: " + sender + " ::end");
 
                     if (!dbHelper.containsPhone(sender)) {
-                        Log.i(TAG, "in smsReceiver containsphone");
+                        Log.i(TAG, "Write to phone table " + sender + " ::end");
                         dbHelper.insertPhone(sender);
                     }
-                    dbHelper.closeDB();         // need to close DB
                 }
+                dbHelper.closeDB();         // need to close DB
 
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                 Log.v(TAG, msg);
@@ -136,9 +145,9 @@ public class SmsReceiver extends BroadcastReceiver {
                 v.vibrate(300);
             }
         } catch (Exception e) {
-            Log.e("SmsReceiver", "Exception: " + e);
+            Log.e("SmsReceiver", "Exception: " + e.getMessage());
+            e.printStackTrace();
         }
-
 //        notify(sender, content);
     }
 

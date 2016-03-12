@@ -1,6 +1,7 @@
 package com.example.feeling.spamtextblocker.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -64,9 +65,11 @@ public class ChatAdapter extends ArrayAdapter<Message> {
             singleMessageContainer.setBackgroundResource(R.drawable.right_bubble_green);
         } else if ("ME".equals(msg.getSender()) && !msg.isDelivered()) {
             newView.setGravity(Gravity.END);
-            singleMessageContainer.setBackgroundResource(R.drawable.right_bubble_gray);
+            singleMessageContainer.setBackgroundResource(R.drawable.right_bubble_green);
         } else {
             newView.setGravity(Gravity.START);
+            content.setTextColor(Color.BLACK);
+            time.setTextColor(Color.BLACK);
             singleMessageContainer.setBackgroundResource(R.drawable.left_bubble_gray);
         }
 
