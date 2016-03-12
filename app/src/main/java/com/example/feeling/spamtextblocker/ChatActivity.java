@@ -40,15 +40,17 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
-
         Intent intent = getIntent();
         contactNumber = intent.getStringExtra("contactNumber");
+        setTitle(contactNumber);
+        setContentView(R.layout.activity_chat);
+
 
         dbHelper = new DatabaseHelper(this);
 
         chatArrayList = new ArrayList<>();
-        chatAdapter = new ChatAdapter(getApplicationContext(), R.layout.chat_list_elemnt, chatArrayList);
+        chatAdapter = new ChatAdapter(getApplicationContext(),
+                R.layout.chat_list_elemnt, chatArrayList);
 
         myListView = (ListView) findViewById(R.id.listViewChat);
         myListView.setAdapter(chatAdapter);

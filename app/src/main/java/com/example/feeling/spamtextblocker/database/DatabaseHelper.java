@@ -205,7 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Check if the phone table has the given number or not
     public boolean containsPhone(String phoneNumber) {
         String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
-                PHONE_COL_NUMBER + " = " + "'" + phoneNumber + "'";
+                PHONE_COL_NUMBER + " = '" + phoneNumber + "'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
