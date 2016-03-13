@@ -1,18 +1,13 @@
 package com.example.feeling.spamtextblocker;
 
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.models.Message;
@@ -117,8 +112,8 @@ public class ComposeSmsActivity extends Activity {
 
         // Update message list in conversation thread
         // and in chat room simultaneously
-        ReceiveSmsActivity.convArrayList.add(0, message);
-        ReceiveSmsActivity.convAdapter.notifyDataSetChanged();
+        MainActivity.convArrayList.add(0, message);
+        MainActivity.convAdapter.notifyDataSetChanged();
         ChatActivity.chatArrayList.add(message);
         ChatActivity.chatAdapter.notifyDataSetChanged();
 
@@ -130,7 +125,7 @@ public class ComposeSmsActivity extends Activity {
     }
 
     public void goToInbox(View v) {
-        Intent intent = new Intent(ComposeSmsActivity.this, ReceiveSmsActivity.class);
+        Intent intent = new Intent(ComposeSmsActivity.this, MainActivity.class);
         startActivity(intent);
     }
 }

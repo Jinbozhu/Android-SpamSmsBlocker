@@ -34,17 +34,13 @@
         </activity>
 
         <activity
-            android:name=".ReceiveSmsActivity">
-        </activity>
-
-        <activity
             android:name=".ChatActivity"
-            android:parentActivityName="com.example.feeling.spamtextblocker.ReceiveSmsActivity">
+            android:parentActivityName=".MainActivity">
         </activity>
 
         <activity
             android:name=".ConversationActivity"
-            android:parentActivityName="com.example.feeling.spamtextblocker.ReceiveSmsActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@android:style/Theme.Holo.Light">  -- cause nullPointerException when call getActionBar() without it.
         </activity>
 

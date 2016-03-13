@@ -16,10 +16,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.ChatActivity;
-import com.example.feeling.spamtextblocker.ReceiveSmsActivity;
+import com.example.feeling.spamtextblocker.MainActivity;
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.database.SmsDatabase;
-import com.example.feeling.spamtextblocker.models.Contact;
 import com.example.feeling.spamtextblocker.models.Message;
 
 import java.text.SimpleDateFormat;
@@ -123,8 +122,8 @@ public class SmsReceiver extends BroadcastReceiver {
 
                     // Update message list in conversation thread
                     // and in chat room simultaneously
-                    ReceiveSmsActivity.convArrayList.add(0, message);
-                    ReceiveSmsActivity.convAdapter.notifyDataSetChanged();
+                    MainActivity.convArrayList.add(0, message);
+                    MainActivity.convAdapter.notifyDataSetChanged();
                     ChatActivity.chatArrayList.add(message);
                     ChatActivity.chatAdapter.notifyDataSetChanged();
                     Log.i(TAG, "Logging my sender: " + sender + " ::end");
@@ -217,7 +216,7 @@ public class SmsReceiver extends BroadcastReceiver {
      * Write to content://sms/sent works. Even though I want to
      * write to content://sms/inbox, the message goes to sent box.
      * <p/>
-     * In ReceiveSmsActivity, if query from content://sms/inbox,
+     * In MainActivity, if query from content://sms/inbox,
      * I cannot get the latest messages received. But if query from
      * content://sms/sent, I have access to those newly arrived messages.
      * <p/>

@@ -21,4 +21,25 @@
         android:onClick="goToCompose"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/notDefaultApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Not default app"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@+id/setDefaultApp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/setDefaultApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set to default app"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="88dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

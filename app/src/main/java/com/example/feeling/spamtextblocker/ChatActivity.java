@@ -3,7 +3,6 @@ package com.example.feeling.spamtextblocker;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
@@ -15,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +21,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.adapters.ChatAdapter;
-import com.example.feeling.spamtextblocker.adapters.ConversationAdapter;
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.models.Message;
 
@@ -105,7 +102,7 @@ public class ChatActivity extends AppCompatActivity {
                 deleteMessage(index);
                 return true;
             case R.id.create_contact:
-                addContact(index);
+                createContact(index);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -151,7 +148,7 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter.notifyDataSetChanged();
     }
 
-    private void addContact(final int index) {
+    private void createContact(final int index) {
         Message msg = chatArrayList.get(index);
         String phoneNumber = msg.getSender();
         if ("ME".equals(phoneNumber)) {
@@ -190,11 +187,19 @@ public class ChatActivity extends AppCompatActivity {
                                 // get user input and set it to result
                                 // edit text
                                 String contactName = nameInput.getText().toString();
+                                String phoneNumber2 = phoneInput.getText().toString();
                                 long insertId = dbHelper.insertContact(contactName, true);
                                 if (insertId == -1) {
                                     Log.i(TAG, "insert contact failed.");
                                 } else {
                                     Log.i(TAG, "insert contact successful.");
+                                    // Update phone table's contact_id column
+                                    long id = dbHelper.updatePhone(phoneNumber2, insertId);
+                                    if (id == -1) {
+                                        Log.i(TAG, "update phone failed.");
+                                    } else {
+                                        Log.i(TAG, "update phone successful.");
+                                    }
                                 }
                             }
                         })
@@ -272,8 +277,8 @@ public class ChatActivity extends AppCompatActivity {
 
         // Update message list in conversation thread
         // and in chat room simultaneously
-        ReceiveSmsActivity.convArrayList.add(0, message);
-        ReceiveSmsActivity.convAdapter.notifyDataSetChanged();
+        MainActivity.convArrayList.add(0, message);
+        MainActivity.convAdapter.notifyDataSetChanged();
         ChatActivity.chatArrayList.add(message);
         ChatActivity.chatAdapter.notifyDataSetChanged();
 
