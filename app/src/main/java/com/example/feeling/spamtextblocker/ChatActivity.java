@@ -50,10 +50,11 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         contactNumber = intent.getStringExtra("contactNumber");
-        setTitle(contactNumber);
+        dbHelper = new DatabaseHelper(this);
+        String name = dbHelper.getNameFromContact(contactNumber);
+        setTitle(name);
         setContentView(R.layout.activity_chat);
 
-        dbHelper = new DatabaseHelper(this);
 
         chatArrayList = new ArrayList<>();
         chatAdapter = new ChatAdapter(getApplicationContext(),

@@ -387,9 +387,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         // id == -1 means it does not contain this phone number
         // id == 0 means there is no contact id associated with this phone
-        if (id == -1 || id == 0) {
-            return name;
-        } else {
+        if (id != -1 && id != 0) {
             cursor.close();
             closeDB();
             String query = "SELECT *  FROM " + TABLE_NAME_CONTACT +
@@ -400,9 +398,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 name = cursor.getString(cursor.getColumnIndex(CONTACT_COL_NAME));
             }
         }
+
         cursor.close();
         closeDB();
-
         return name;
     }
 
