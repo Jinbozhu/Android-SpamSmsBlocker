@@ -38,12 +38,6 @@
             android:parentActivityName=".MainActivity">
         </activity>
 
-        <activity
-            android:name=".ConversationActivity"
-            android:parentActivityName=".MainActivity"
-            android:theme="@android:style/Theme.Holo.Light">  -- cause nullPointerException when call getActionBar() without it.
-        </activity>
-
 
         <!-- BroadcastReceiver that listens for incoming SMS messages -->
         <receiver android:name=".receivers.SmsReceiver"

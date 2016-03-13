@@ -33,7 +33,7 @@ import java.util.List;
  * Created by feeling on 3/3/16.
  */
 public class MainActivity extends AppCompatActivity implements AdapterView.OnClickListener {
-    public static final String TAG = "ConversationActivity";
+    public static final String TAG = "MainActivity";
 
     DatabaseHelper dbHelper;
 
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Message");
-        setContentView(R.layout.activity_receive_sms);
+        setContentView(R.layout.activity_main);
 
         dbHelper = new DatabaseHelper(this);
 
