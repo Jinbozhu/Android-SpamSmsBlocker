@@ -1,9 +1,12 @@
 <resources>
-    <string name="app_name">SMSTest</string>
+    <string name="app_name">Spam SMS Blocker</string>
     <string name="delete_message">Delete Message</string>
+    <string name="delete_thread">Delete Thread</string>
     <string name="cancel">Cancel</string>
-    <string name="add_contact">Add Contact</string>
+    <string name="create_contact">Create Contact</string>
     <string name="delete">Delete</string>
     <string name="ok">OK</string>
     <string name="copy">Copy</string>
+    <string name="add_to_blacklist">Add To Blacklist</string>
+
 </resources>

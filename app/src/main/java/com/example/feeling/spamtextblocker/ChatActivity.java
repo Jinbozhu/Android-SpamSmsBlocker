@@ -82,7 +82,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         loadSms(contactNumber);
-
     }
 
     @Override
@@ -104,7 +103,7 @@ public class ChatActivity extends AppCompatActivity {
             case R.id.delete:
                 deleteMessage(index);
                 return true;
-            case R.id.add_contact:
+            case R.id.create_contact:
                 addContact(index);
                 return true;
             default:
@@ -160,7 +159,8 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         long contactId = dbHelper.getContactIdFromPhoneTable(phoneNumber);
-
+        // If there is no contactId associated to phoneNumber, the
+        // return value is 0.
         if (contactId != -1 && contactId != 0) {
             Toast.makeText(this, "Contact already exists.", Toast.LENGTH_SHORT).show();
             return;
@@ -172,7 +172,7 @@ public class ChatActivity extends AppCompatActivity {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
-        // set prompts.xml to alertdialog builder
+        // set prompts.xml to AlertDialog builder
         alertDialogBuilder.setView(promptsView);
 
         final EditText nameInput = (EditText) promptsView.findViewById(R.id.editTextName);
@@ -181,7 +181,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // set dialog message
         alertDialogBuilder
-                .setTitle(R.string.add_contact)
+                .setTitle(R.string.create_contact)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {

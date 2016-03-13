@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <item
-        android:id="@+id/copy"
-        android:title="@string/copy" />
-    <item
-        android:id="@+id/delete"
-        android:title="@string/delete_message" />
+        android:id="@+id/delete_thread"
+        android:title="@string/delete_thread" />
     <item
         android:id="@+id/create_contact"
         android:title="@string/create_contact" />
+    <item
+        android:id="@+id/add_to_blacklist"
+        android:title="@string/add_to_blacklist" />
     <item
         android:id="@+id/cancel"
         android:title="@string/cancel" />

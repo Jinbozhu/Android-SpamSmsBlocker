@@ -209,6 +209,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.delete(TABLE_NAME_SMS, selection, new String[]{String.valueOf(id)});
     }
 
+    public void deleteSmsThread(String phoneNumber) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = SMS_COL_SENDER + " = ? OR " + SMS_COL_RECIPIENT + " = ?";
+        db.delete(TABLE_NAME_SMS, selection, new String[]{phoneNumber, phoneNumber});
+    }
+
     // Phone table operations
     // Check if the phone table has the given number or not
     public boolean containsPhone(String phoneNumber) {
@@ -260,10 +266,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
+            // If there is no contactId associated with phoneNumber,
+            // getInt() will return 0. (contact_id column is null)
             contactId = cursor.getInt(cursor.getColumnIndex(PHONE_COL_CONTACT_ID));
         }
         cursor.close();
+        closeDB();
         return contactId;
+    }
+
+    public long updatePhone(String phoneNumber, long contactId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PHONE_COL_CONTACT_ID, contactId);
+
+        String selection = PHONE_COL_NUMBER + " = ?";
+        String[] selectionArgs = { phoneNumber };
+
+        return db.update(TABLE_NAME_PHONE, values, selection, selectionArgs);
     }
 
     public long deletePhone(long id) {
@@ -272,7 +293,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public long deletePhoneOfContact(long contactId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String selection = PHONE_COL_CONTACT_ID + " = ?";
+        String selection = PHONE_COL_CONTACT_ID + " = ";
         return db.delete(TABLE_NAME_PHONE, selection, new String[]{String.valueOf(contactId)});
     }
 
