@@ -252,7 +252,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return numbers;
     }
 
+    public long getContactIdFromPhoneTable(String phoneNumber) {
+        long contactId = -1;
+
+        String selectQuery = "SELECT DISTINCT " + PHONE_COL_CONTACT_ID + " FROM " +
+                TABLE_NAME_PHONE + " WHERE " + PHONE_COL_NUMBER + " = '" + phoneNumber + "'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            contactId = cursor.getInt(cursor.getColumnIndex(PHONE_COL_CONTACT_ID));
+        }
+        cursor.close();
+        return contactId;
+    }
+
+    public long deletePhone(long id) {
+        return 1;
+    }
+
+    public long deletePhoneOfContact(long contactId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = PHONE_COL_CONTACT_ID + " = ?";
+        return db.delete(TABLE_NAME_PHONE, selection, new String[]{String.valueOf(contactId)});
+    }
+
     // Table contact operations
+    public boolean containsContact(long id) {
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_CONTACT + " WHERE " +
+                COL_ID + " = " + id;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Log.i(TAG, String.valueOf(cursor.getCount()));
+        boolean res = cursor.getCount() != 0;
+        cursor.close();
+        closeDB();
+        return res;
+    }
+
     public void updateContact(long id, String name, boolean isAllowed) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -271,6 +308,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(CONTACT_COL_IS_ALLOWED, isAllowed);
 
         return db.insert(TABLE_NAME_CONTACT, null, values);
+    }
+
+    public long deleteContact(long id) {
+        // TODO: delete phone numbers first
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COL_ID + " = ?";
+        return db.delete(TABLE_NAME_CONTACT, selection, new String[]{String.valueOf(id)});
     }
 
     // close database

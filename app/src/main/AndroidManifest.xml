@@ -34,8 +34,7 @@
         </activity>
 
         <activity
-            android:name=".ReceiveSmsActivity"
-            android:parentActivityName="com.example.feeling.spamtextblocker.MainActivity">
+            android:name=".ReceiveSmsActivity">
         </activity>
 
         <activity

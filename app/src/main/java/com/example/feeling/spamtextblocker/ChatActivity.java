@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -95,16 +96,24 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int index = info.position;
         switch (item.getItemId()) {
+            case R.id.copy:
+                copy(index);
+                return true;
             case R.id.delete:
-                deleteMessage(info.position);
+                deleteMessage(index);
                 return true;
             case R.id.add_contact:
-                addContact(info.position);
+                addContact(index);
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    private void copy(int index) {
+
     }
 
     // Modified from
@@ -142,9 +151,70 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter.notifyDataSetChanged();
     }
 
-    private void addContact(int id) {
+    private void addContact(final int index) {
+        Message msg = chatArrayList.get(index);
+        String phoneNumber = msg.getSender();
+        if ("ME".equals(phoneNumber)) {
+            Toast.makeText(this, "Your number already exists.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        long contactId = dbHelper.getContactIdFromPhoneTable(phoneNumber);
+
+        if (contactId != -1 && contactId != 0) {
+            Toast.makeText(this, "Contact already exists.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.create_contact_dialog, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText nameInput = (EditText) promptsView.findViewById(R.id.editTextName);
+        final EditText phoneInput = (EditText) promptsView.findViewById(R.id.editTextPhone);
+        phoneInput.setText(phoneNumber);
+
+        // set dialog message
+        alertDialogBuilder
+                .setTitle(R.string.add_contact)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // get user input and set it to result
+                                // edit text
+                                String contactName = nameInput.getText().toString();
+                                long insertId = dbHelper.insertContact(contactName, true);
+                                if (insertId == -1) {
+                                    Log.i(TAG, "insert contact failed.");
+                                } else {
+                                    Log.i(TAG, "insert contact successful.");
+                                }
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    private void processAddContact(int index) {
 
     }
+
     private void loadSms(String contactNumber) {
         chatArrayList.clear();
         List<Message> sms = dbHelper.getAllSmsForCertainNumber(contactNumber);
