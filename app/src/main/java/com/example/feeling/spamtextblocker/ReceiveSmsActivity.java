@@ -33,7 +33,6 @@ public class ReceiveSmsActivity extends AppCompatActivity implements AdapterView
     public static final String TAG = "ConversationActivity";
 
     DatabaseHelper dbHelper;
-    SQLiteDatabase db;
 
     public static List<Message> convArrayList;
     public static ArrayAdapter convAdapter;
@@ -68,14 +67,6 @@ public class ReceiveSmsActivity extends AppCompatActivity implements AdapterView
 
         registerForContextMenu(convListView);
 
-//        convListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Object listItem = convListView.getItemAtPosition(position);
-//            }
-//        });
-
-//        refreshSmsInbox();
         loadSmsFromDatabase();
     }
 
@@ -189,7 +180,31 @@ public class ReceiveSmsActivity extends AppCompatActivity implements AdapterView
     }
 
     private void addToBlacklist(int index) {
+        Message msg = convArrayList.get(index);
+        String phoneNumber = msg.getSender();
+        if ("ME".equals(phoneNumber)) {
+            phoneNumber = msg.getRecipient();
+        }
 
+        long contactId = dbHelper.getContactIdFromPhoneTable(phoneNumber);
+        if (contactId == 0) {
+            // This number is not in the contact book, insert it
+            // and mark it as blocked.
+            long insertId = dbHelper.insertContact(phoneNumber, false);
+            // Every time a contact is inserted, update the phone table.
+            dbHelper.updatePhone(phoneNumber, insertId);
+        } else if (contactId == -1) {
+            Toast.makeText(this, "The phone number is not in the table.", Toast.LENGTH_SHORT).show();
+        } else {
+            // Block the contact.
+            long resId = dbHelper.blockContact(contactId);
+            if (resId == -1) {
+                Log.i(TAG, "add to blacklist failed.");
+            } else {
+                Log.i(TAG, "added to blacklist.");
+//            dbHelper.moveSmsToBlocked(contactId);
+            }
+        }
     }
 
     public void loadSmsFromDatabase() {

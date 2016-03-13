@@ -215,6 +215,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_NAME_SMS, selection, new String[]{phoneNumber, phoneNumber});
     }
 
+    public void moveSmsToBlocked(long id) {
+
+    }
+
     // Phone table operations
     // Check if the phone table has the given number or not
     public boolean containsPhone(String phoneNumber) {
@@ -258,6 +262,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return numbers;
     }
 
+    /**
+     * If there is no contactId associated with phoneNumber,
+     * getInt() will return 0. (contact_id column is null)
+     * <p/>
+     * If it returns -1, it means there is no such number in phone table.
+     *
+     * @param phoneNumber
+     * @return
+     */
     public long getContactIdFromPhoneTable(String phoneNumber) {
         long contactId = -1;
 
@@ -282,7 +295,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(PHONE_COL_CONTACT_ID, contactId);
 
         String selection = PHONE_COL_NUMBER + " = ?";
-        String[] selectionArgs = { phoneNumber };
+        String[] selectionArgs = {phoneNumber};
 
         return db.update(TABLE_NAME_PHONE, values, selection, selectionArgs);
     }
@@ -291,6 +304,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return 1;
     }
 
+    // Before delete a contact, we need to delete the phone numbers
+    // of the contact first.
     public long deletePhoneOfContact(long contactId) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = PHONE_COL_CONTACT_ID + " = ";
@@ -318,7 +333,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(CONTACT_COL_NAME, name);
         values.put(CONTACT_COL_IS_ALLOWED, isAllowed);
 
-        db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ", new String[]{String.valueOf(id)});
+        db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    public long blockContact(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(CONTACT_COL_IS_ALLOWED, false);
+
+        return db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    public long unblockContact(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(CONTACT_COL_IS_ALLOWED, true);
+
+        return db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
     }
 
     public long insertContact(String name, boolean isAllowed) {
@@ -336,6 +369,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = COL_ID + " = ?";
         return db.delete(TABLE_NAME_CONTACT, selection, new String[]{String.valueOf(id)});
+    }
+
+    // If phone's contact_id column is not null, get the name from contact
+    // Otherwise, show the number.
+    public String getNameFromContact(String phoneNumber) {
+        String name = phoneNumber;
+
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
+                PHONE_COL_NUMBER + " = '" + phoneNumber + "' LIMIT 1";
+
+        long id = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(cursor.getColumnIndex(PHONE_COL_CONTACT_ID));
+        }
+        // id == -1 means it does not contain this phone number
+        // id == 0 means there is no contact id associated with this phone
+        if (id == -1 || id == 0) {
+            return name;
+        } else {
+            cursor.close();
+            closeDB();
+            String query = "SELECT *  FROM " + TABLE_NAME_CONTACT +
+                    " WHERE " + COL_ID + " = " + id;
+            db = this.getReadableDatabase();
+            cursor = db.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                name = cursor.getString(cursor.getColumnIndex(CONTACT_COL_NAME));
+            }
+        }
+        cursor.close();
+        closeDB();
+
+        return name;
     }
 
     // close database

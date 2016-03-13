@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.feeling.spamtextblocker.R;
+import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.models.Message;
 
 import java.util.Date;
@@ -20,6 +21,8 @@ import java.util.List;
  * Copied from Prof. Luca class code
  */
 public class ConversationAdapter extends ArrayAdapter<Message> {
+    DatabaseHelper dbHelper;
+
     int resource;
     Context context;
 
@@ -31,6 +34,8 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
         super(_context, _resource, items);
         resource = _resource;
         context = _context;
+
+        dbHelper = new DatabaseHelper(context);
     }
 
     @Override
@@ -55,10 +60,10 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
         msgText.setText(element.getContent());
         String sender = element.getSender();
         if ("ME".equals(sender)) {
-            contact.setText(element.getRecipient());
-        } else {
-            contact.setText(sender);
+            sender = element.getRecipient();
         }
+        String name = dbHelper.getNameFromContact(sender);
+        contact.setText(name);
         // Convert timestamp from long integer to human-readable format.
         long millis = element.getTime();
         String date = DateFormat.format("MMM dd, h:mm aa", new Date(millis)).toString();
