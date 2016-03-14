@@ -9,6 +9,7 @@
     <string name="ok">OK</string>
     <string name="copy">Copy</string>
     <string name="add_to_blacklist">Add To Blacklist</string>
+    <string name="unblock">Unblock this contact</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 </resources>

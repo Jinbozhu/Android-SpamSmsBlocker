@@ -112,6 +112,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                         startActivity(intent);
                         break;
                     case 1:
+                        intent = new Intent(MainActivity.this, BlacklistActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
                         break;
                     default:
                         break;
@@ -343,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
             Toast.makeText(this, "The phone number is not in the table.", Toast.LENGTH_SHORT).show();
         } else {
             // Block the contact.
-            long resId = dbHelper.blockContact(contactId);
+            long resId = dbHelper.isAllowContact(contactId, false);
             if (resId == -1) {
                 Log.i(TAG, "add to blacklist failed.");
             } else {

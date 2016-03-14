@@ -348,13 +348,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String name = cursor.getString(cursor.getColumnIndex(CONTACT_COL_NAME));
                 Contact contact = new Contact(id, name, true);
                 allowedContact.add(contact);
-                Log.i("get Allowed contact", contact.toString());
+                Log.i("get Allowed contact", contact.getName());
             } while (cursor.moveToNext());
         }
         cursor.close();
         closeDB();
 
         return allowedContact;
+    }
+
+    public List<Contact> getBlockedContact() {
+        List<Contact> blockedContact = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+//        String[] projection = {CONTACT_COL_NAME};
+        String selection = CONTACT_COL_IS_ALLOWED + " = ?";
+        String[] selectionArgs = {String.valueOf(0)};
+        Cursor cursor = db.query(
+                TABLE_NAME_CONTACT,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                long id = cursor.getInt(cursor.getColumnIndex(COL_ID));
+                String name = cursor.getString(cursor.getColumnIndex(CONTACT_COL_NAME));
+                Contact contact = new Contact(id, name, true);
+                blockedContact.add(contact);
+                Log.i("get blocked contact", contact.getName());
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        closeDB();
+
+        return blockedContact;
     }
 
     public void updateContact(long id, String name, boolean isAllowed) {
@@ -367,20 +397,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
     }
 
-    public long blockContact(long id) {
+    /**
+     * Block or unblock contact.
+     * If isAllowed is true, we add the contact to allow list.
+     * If isAllowed is false, we add the contact to black list.
+     *
+     * @param id
+     * @param isAllowed
+     * @return
+     */
+    public long isAllowContact(long id, boolean isAllowed) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(CONTACT_COL_IS_ALLOWED, false);
-
-        return db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
-    }
-
-    public long unblockContact(long id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(CONTACT_COL_IS_ALLOWED, true);
+        values.put(CONTACT_COL_IS_ALLOWED, isAllowed);
 
         return db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
     }

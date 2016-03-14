@@ -21,12 +21,12 @@ import java.util.List;
 /**
  * Created by feeling on 3/13/16.
  */
-public class AllowlistActivity extends AppCompatActivity {
-    public static final String TAG = "AllowlistActivity";
+public class BlacklistActivity extends AppCompatActivity {
+    public static final String TAG = "BlacklistActivity";
 
-    private AlAdapter alAdapter;
-    private List<Contact> alArrayList;
-    private ListView alListView;
+    private AlAdapter blAdapter;
+    private List<Contact> blArrayList;
+    private ListView blListView;
 
     DatabaseHelper dbHelper;
 
@@ -35,15 +35,15 @@ public class AllowlistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_allowlist);
 
-        setTitle("Allow list");
+        setTitle("Black list");
         dbHelper = new DatabaseHelper(this);
 
-        alArrayList = new ArrayList<>();
-        alAdapter = new AlAdapter(getApplicationContext(), R.layout.contact_list_element, alArrayList);
+        blArrayList = new ArrayList<>();
+        blAdapter = new AlAdapter(getApplicationContext(), R.layout.contact_list_element, blArrayList);
 
-        alListView = (ListView) findViewById(R.id.listViewAllow);
-        alListView.setAdapter(alAdapter);
-//        alListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        blListView = (ListView) findViewById(R.id.listViewAllow);
+        blListView.setAdapter(blAdapter);
+//        blListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Intent intent = new Intent(AllowlistActivity.this, ChatActivity.class);
@@ -55,15 +55,15 @@ public class AllowlistActivity extends AppCompatActivity {
 //            }
 //        });
 
-        registerForContextMenu(alListView);
+        registerForContextMenu(blListView);
 
-        loadAllowedContact();
+        loadBlockedContact();
     }
 
-    private void loadAllowedContact() {
-        alArrayList.clear();
-        alArrayList.addAll(dbHelper.getAllowedContact());
-        alAdapter.notifyDataSetChanged();
+    private void loadBlockedContact() {
+        blArrayList.clear();
+        blArrayList.addAll(dbHelper.getBlockedContact());
+        blAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class AllowlistActivity extends AppCompatActivity {
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.al_context_menu, menu);
+        inflater.inflate(R.menu.bl_context_menu, menu);
     }
 
     @Override
@@ -82,34 +82,34 @@ public class AllowlistActivity extends AppCompatActivity {
             case R.id.delete_contact:
                 deleteContact(index);
                 return true;
-            case R.id.add_to_blacklist:
-                addToBlacklist(index);
+            case R.id.unblock:
+                unblockContact(index);
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
     }
 
-    public void addToBlacklist(int index) {
-        Contact contact = alArrayList.get(index);
+    public void unblockContact(int index) {
+        Contact contact = blArrayList.get(index);
         long contactId = contact.getId();
 
-        // Block the contact.
-        long resId = dbHelper.isAllowContact(contactId, false);
+        // true indicates the contact is unblocked.
+        long resId = dbHelper.isAllowContact(contactId, true);
         if (resId == -1) {
-            Log.i(TAG, "add to blacklist failed.");
-            Toast.makeText(this, "Block contact failed.", Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Unblock failed.");
+            Toast.makeText(this, "Unblock failed.", Toast.LENGTH_SHORT).show();
         } else {
-            Log.i(TAG, "added to blacklist.");
-            Toast.makeText(this, "Contact blocked.", Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Contact is unblocked.");
+            Toast.makeText(this, "Contact is unblocked.", Toast.LENGTH_SHORT).show();
             // Update list view
-            alArrayList.remove(index);
-            alAdapter.notifyDataSetChanged();
+            blArrayList.remove(index);
+            blAdapter.notifyDataSetChanged();
         }
     }
 
     public void deleteContact(int index) {
-        Contact contact = alArrayList.get(index);
+        Contact contact = blArrayList.get(index);
         long contactId = contact.getId();
         long delId = dbHelper.deleteContact(contactId);
         if (delId == -1) {
@@ -119,8 +119,8 @@ public class AllowlistActivity extends AppCompatActivity {
             Log.i(TAG, "delete contact successful");
             Toast.makeText(this, "Delete contact successful.", Toast.LENGTH_SHORT).show();
             // Update list view
-            alArrayList.remove(index);
-            alAdapter.notifyDataSetChanged();
+            blArrayList.remove(index);
+            blAdapter.notifyDataSetChanged();
         }
     }
 }
