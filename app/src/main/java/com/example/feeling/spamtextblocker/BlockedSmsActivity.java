@@ -85,7 +85,7 @@ public class BlockedSmsActivity extends AppCompatActivity {
 
     public void loadSmsFromDatabase() {
         blockedArrayList.clear();
-        List<Message> allSms = dbHelper.getLastBlockedSmsForCertainNumber();
+        List<Message> allSms = dbHelper.getLastSmsForCertainNumber();
 
         for (int i = allSms.size() - 1; i >= 0; i--) {
             blockedArrayList.add(allSms.get(i));
@@ -109,9 +109,7 @@ public class BlockedSmsActivity extends AppCompatActivity {
 
         // TODO
         //noinspection SimplifiableIfStatement
-        if (id == R.id.settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -207,7 +205,8 @@ public class BlockedSmsActivity extends AppCompatActivity {
             Toast.makeText(this, "Restore failed.", Toast.LENGTH_SHORT).show();
         } else {
             Log.i(TAG, "Restore successful.");
-            Toast.makeText(this, "Restore successful.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Restore failed.", Toast.LENGTH_SHORT).show();
+
             blockedArrayList.remove(index);
             blockedAdapter.notifyDataSetChanged();
         }

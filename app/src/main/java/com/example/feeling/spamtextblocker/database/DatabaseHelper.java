@@ -246,6 +246,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_NAME_SMS, selection, new String[]{phoneNumber, phoneNumber});
     }
 
+    public void clearSmsInbox() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = SMS_COL_IS_SPAM + " = ?";
+        db.delete(TABLE_NAME_SMS, selection, new String[]{String.valueOf(0)});
+    }
+
+    public void markAllSmsInInboxRead() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(SMS_COL_IS_READ, true);
+
+        String selection = SMS_COL_IS_SPAM + " = ?";
+        String[] selectionArgs = {String.valueOf(0)};
+
+        db.update(TABLE_NAME_SMS, values, selection, selectionArgs);
+    }
     public long markSmsNotSpam(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
 

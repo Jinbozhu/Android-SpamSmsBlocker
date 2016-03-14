@@ -190,9 +190,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.settings) {
-            return true;
+        switch (id) {
+            case R.id.mark_all_read:
+                markAllRead();
+                break;
+            case R.id.delete_all:
+                deleteAll();
+                break;
+            default:
+                break;
         }
 
         // Activate the navigation drawer toggle
@@ -201,6 +207,61 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void markAllRead() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.mark_all_read)
+                .setMessage("Mark all messages as read?")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                processMarkAllRead();
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // ignore, just dismiss
+                            }
+                        })
+                .show();
+    }
+
+    private void processMarkAllRead() {
+        dbHelper.markAllSmsInInboxRead();
+        Log.i(TAG, "All messages are marked as read.");
+    }
+
+    private void deleteAll() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_all)
+                .setMessage("All messages will be deleted.")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                processDeleteAll();
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // ignore, just dismiss
+                            }
+                        })
+                .show();
+    }
+
+    private void processDeleteAll() {
+        dbHelper.clearSmsInbox();
+        Log.i(TAG, "All messages deleted.");
+
+        convArrayList.clear();
+        convAdapter.notifyDataSetChanged();
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

@@ -222,10 +222,6 @@ public class ChatActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void processAddContact(int index) {
-
-    }
-
     private void loadSms(String contactNumber) {
         chatArrayList.clear();
         List<Message> sms = dbHelper.getAllSmsForCertainNumber(contactNumber);

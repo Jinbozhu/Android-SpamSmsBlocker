@@ -4,6 +4,8 @@
     <string name="delete_message">Delete Message</string>
     <string name="delete_thread">Delete Thread</string>
     <string name="delete_contact">Delete Contact</string>
+    <string name="delete_all">Delete All</string>
+    <string name="mark_all_read">Mark All Read</string>
     <string name="cancel">Cancel</string>
     <string name="create_contact">Create Contact</string>
     <string name="ok">OK</string>
