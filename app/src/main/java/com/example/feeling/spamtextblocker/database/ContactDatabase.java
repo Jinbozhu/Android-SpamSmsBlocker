@@ -34,11 +34,6 @@ public class ContactDatabase extends DatabaseHelper {
         super(context);
     }
 
-//    @Override
-    protected String getTableName() {
-        return TABLE_NAME;
-    }
-
     public long insertContact(Contact contact) {
         if (contact == null) {
             throw new IllegalArgumentException("contact == null");
@@ -47,7 +42,7 @@ public class ContactDatabase extends DatabaseHelper {
         ContentValues values = new ContentValues();
         values.put(COL_NAME, contact.getName());
         // When we insert a contact, there is only one number for the contact
-        values.put(COL_NUMBER, contact.getNumbers().get(0));
+//        values.put(COL_NUMBER, contact.getNumbers().get(0));
         values.put(COL_IS_ALLOWED, contact.isAllowed());
 
 //        return insert(values);

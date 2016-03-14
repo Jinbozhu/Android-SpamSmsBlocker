@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.feeling.spamtextblocker.models.Contact;
 import com.example.feeling.spamtextblocker.models.Message;
 
 import java.util.ArrayList;
@@ -308,7 +309,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // of the contact first.
     public long deletePhoneOfContact(long contactId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String selection = PHONE_COL_CONTACT_ID + " = ";
+        String selection = PHONE_COL_CONTACT_ID + " = ?";
         return db.delete(TABLE_NAME_PHONE, selection, new String[]{String.valueOf(contactId)});
     }
 
@@ -324,6 +325,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         closeDB();
         return res;
+    }
+
+    public List<Contact> getAllowedContact() {
+        List<Contact> allowedContact = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+//        String[] projection = {CONTACT_COL_NAME};
+        String selection = CONTACT_COL_IS_ALLOWED + " = ?";
+        String[] selectionArgs = {String.valueOf(1)};
+        Cursor cursor = db.query(
+                TABLE_NAME_CONTACT,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                long id = cursor.getInt(cursor.getColumnIndex(COL_ID));
+                String name = cursor.getString(cursor.getColumnIndex(CONTACT_COL_NAME));
+                Contact contact = new Contact(id, name, true);
+                allowedContact.add(contact);
+                Log.i("get Allowed contact", contact.toString());
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        closeDB();
+
+        return allowedContact;
     }
 
     public void updateContact(long id, String name, boolean isAllowed) {
@@ -365,7 +396,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public long deleteContact(long id) {
-        // TODO: delete phone numbers first
+        // Need to delete the phone numbers of this contact first
+        // because contact_id is a foreign key.
+        deletePhoneOfContact(id);
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = COL_ID + " = ?";
         return db.delete(TABLE_NAME_CONTACT, selection, new String[]{String.valueOf(id)});

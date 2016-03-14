@@ -52,7 +52,6 @@ public class ChatActivity extends AppCompatActivity {
         setTitle(name);
         setContentView(R.layout.activity_chat);
 
-
         chatArrayList = new ArrayList<>();
         chatAdapter = new ChatAdapter(getApplicationContext(),
                 R.layout.chat_list_elemnt, chatArrayList);
@@ -68,11 +67,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 checkMessageLength();

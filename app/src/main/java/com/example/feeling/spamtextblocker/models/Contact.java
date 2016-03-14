@@ -6,9 +6,15 @@ import java.util.List;
  * Created by feeling on 3/5/16.
  */
 public class Contact {
+    private long id;
     private String name;
-    private List<String> numbers;
     private boolean isAllowed;
+
+    public Contact(long id, String name, boolean isAllowed) {
+        this.id = id;
+        this.name = name;
+        this.isAllowed = isAllowed;
+    }
 
     public String getName() {
         return name;
@@ -26,11 +32,11 @@ public class Contact {
         this.isAllowed = isAllowed;
     }
 
-    public List<String> getNumbers() {
-        return numbers;
+    public long getId() {
+        return id;
     }
 
-    public void setNumbers(List<String> numbers) {
-        this.numbers = numbers;
+    public void setId(long id) {
+        this.id = id;
     }
 }

@@ -38,6 +38,10 @@
             android:parentActivityName=".MainActivity">
         </activity>
 
+        <activity
+            android:name=".AllowlistActivity"
+            android:parentActivityName=".MainActivity">
+        </activity>
 
         <!-- BroadcastReceiver that listens for incoming SMS messages -->
         <receiver android:name=".receivers.SmsReceiver"
