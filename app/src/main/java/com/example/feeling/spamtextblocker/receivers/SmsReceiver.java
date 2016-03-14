@@ -82,67 +82,57 @@ public class SmsReceiver extends BroadcastReceiver {
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
                     String dateText = format.format(date);
 
-                    msg += sender + " at " + "\t" + dateText + "\n" + content + "\n";
+                    msg += sender + " at " + dateText + "\n" + content + "\n";
 
-                    message = new Message(
-                            0,              // temp id
-                            sender,
-                            content,
-                            "ME",
-                            timeMillis,
-                            true,
-                            false,
-                            isSpam
-                    );
+                    message = new Message(0, sender, content, "ME", timeMillis, true, false, isSpam);
 
 //                    insertSmsToDataBase(context, message);
-
-//                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-//                    dbHelper.onUpgrade(db, 1,2);
 
                     // Insert operation returns the id of the inserted row.
                     // If it fails, it will return -1.
                     long id = dbHelper.insertSms(message);
-                    if (id != -1) {
-                        Toast.makeText(context, "sms is inserted.", Toast.LENGTH_SHORT).show();
+                    if (id == -1) {
+                        Log.i(TAG, "Insert sms to database failed.");
+                        Toast.makeText(context, "Insert sms failed.", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.i(TAG, "Inserted sms to database.");
-                        Toast.makeText(context, "Insert sms failed.", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, "sms is inserted.", Toast.LENGTH_SHORT).show();
                     }
 
                     // Assign the id in the database to the "id" field
                     // so that when I want to delete a message, I can
                     // find it using the id of the message.
                     message.setId(id);
-                    Toast.makeText(context, String.valueOf(message.getId()), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, String.valueOf(message.getId()), Toast.LENGTH_SHORT).show();
 
-                    Log.i(TAG, "Print message: " + message.toString());
+                    Log.i(TAG, "msg Id: " + message.getId() + " " + message.toString());
 
 //                    saveMsgToSystem(context, sender, content, timeMillis);
 
-                    // TODO: need better update strategy
-                    // Update message list in conversation thread
-                    // and in chat room simultaneously
-                    MainActivity.convArrayList.add(0, message);
-                    MainActivity.convAdapter.notifyDataSetChanged();
-                    ChatActivity.chatArrayList.add(message);
-                    ChatActivity.chatAdapter.notifyDataSetChanged();
-                    Log.i(TAG, "Logging my sender: " + sender + " ::end");
+                    if (!isSpam) {
+                        // TODO: need better update strategy
+                        // Update message list in conversation thread
+                        // and in chat room simultaneously
+                        MainActivity.convArrayList.add(0, message);
+                        MainActivity.convAdapter.notifyDataSetChanged();
+                        ChatActivity.chatArrayList.add(message);
+                        ChatActivity.chatAdapter.notifyDataSetChanged();
+
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+
+                        // Get instance of Vibrator from current Context
+                        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                        // Vibrate for 300 milliseconds
+                        v.vibrate(300);
+                    }
 
                     if (!dbHelper.containsPhone(sender)) {
-                        Log.i(TAG, "Write to phone table " + sender + " ::end");
+                        Log.i(TAG, "Write sender to phone table: " + sender);
                         dbHelper.insertPhone(sender);
                     }
                 }
+
                 dbHelper.closeDB();         // need to close DB
-
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                Log.v(TAG, msg);
-
-                // Get instance of Vibrator from current Context
-                Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                // Vibrate for 300 milliseconds
-                v.vibrate(300);
             }
         } catch (Exception e) {
             Log.e("SmsReceiver", "Exception: " + e.getMessage());
@@ -174,26 +164,6 @@ public class SmsReceiver extends BroadcastReceiver {
         }
 
         cursor.close();
-    }
-
-    private boolean insertSmsToDataBase(Context context, Message message) {
-        ContentValues values = new ContentValues();
-        values.put("sender", message.getSender());
-        values.put("content", message.getContent());
-        values.put("recipient", message.getRecipient());
-        values.put("time", message.getTime());
-        values.put("isDelivered", message.isDelivered());
-        values.put("isRead", message.isRead());
-        values.put("isSpam", message.isSpam());
-
-        long res = db.insert(SmsDatabase.TABLE_NAME, null, values);
-        boolean flag = res != -1;
-        if (flag) {
-            Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "Insert failed.", Toast.LENGTH_SHORT).show();
-        }
-        return flag;
     }
 
     // Giving me "nullPointerException when call getPackageName()"

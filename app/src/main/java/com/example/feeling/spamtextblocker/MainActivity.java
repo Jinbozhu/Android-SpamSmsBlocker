@@ -96,6 +96,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         loadSmsFromDatabase();
     }
 
+    public void loadSmsFromDatabase() {
+        convArrayList.clear();
+        List<Message> allSms = dbHelper.getLastSmsForCertainNumber();
+
+        for (int i = allSms.size() - 1; i >= 0; i--) {
+            convArrayList.add(allSms.get(i));
+        }
+        convAdapter.notifyDataSetChanged();
+    }
+
     private void addDrawerItems() {
         String[] drawerArray = {"Allow list", "Black list", "Blocked messages", "Settings"};
         drawerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, drawerArray);
@@ -120,7 +130,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                         startActivity(intent);
                         break;
                     case 3:
-
+                        intent = new Intent(MainActivity.this, SettingsActivity.class);
+                        startActivity(intent);
                         break;
                     default:
                         break;
@@ -252,7 +263,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         }
     }
 
-    private void deleteThread(int index) {
+    private void deleteThread(final int index) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete)
+                .setMessage("Thread will be deleted.")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                processDeleteThread(index);
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // ignore, just dismiss
+                            }
+                        })
+                .show();
+    }
+
+    private void processDeleteThread(int index) {
         Message msg = convArrayList.get(index);
         String phoneNumber = msg.getSender();
         if ("ME".equals(phoneNumber)) {
@@ -260,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         }
 
         dbHelper.deleteSmsThread(phoneNumber);
+        Log.i(TAG, "Thread [" + phoneNumber + "] deleted.");
 
         convArrayList.remove(index);
         convAdapter.notifyDataSetChanged();
@@ -334,7 +367,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         alertDialog.show();
     }
 
-    private void addToBlacklist(int index) {
+    private void addToBlacklist(final int index) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.add_to_blacklist)
+                .setMessage("Add this contact to blacklist?")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                processAddToBlacklist(index);
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // ignore, just dismiss
+                            }
+                        })
+                .show();
+    }
+
+    private void processAddToBlacklist(int index) {
         Message msg = convArrayList.get(index);
         String phoneNumber = msg.getSender();
         if ("ME".equals(phoneNumber)) {
@@ -357,19 +411,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                 Log.i(TAG, "add to blacklist failed.");
             } else {
                 Log.i(TAG, "added to blacklist.");
+                Toast.makeText(this, "This contact is blocked.", Toast.LENGTH_SHORT).show();
 //            dbHelper.moveSmsToBlocked(contactId);
             }
         }
-    }
-
-    public void loadSmsFromDatabase() {
-        convArrayList.clear();
-        List<Message> allSms = dbHelper.getLastSmsForCertainNumber();
-
-        for (int i = allSms.size() - 1; i >= 0; i--) {
-            convArrayList.add(allSms.get(i));
-        }
-        convAdapter.notifyDataSetChanged();
     }
 
 //    public void refreshSmsInbox() {
@@ -408,6 +453,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 //        convAdapter.notifyDataSetChanged();
 //    }
 
+    // Maybe put it into Utils?
     public void updateList(final Message msg) {
         convArrayList.add(msg);
         convAdapter.notifyDataSetChanged();
