@@ -116,7 +116,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                         startActivity(intent);
                         break;
                     case 2:
-
+                        intent = new Intent(MainActivity.this, BlockedSmsActivity.class);
+                        startActivity(intent);
                         break;
                     case 3:
 

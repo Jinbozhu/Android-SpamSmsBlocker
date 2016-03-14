@@ -116,8 +116,10 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    // Modified from
-    // https://github.com/commonsguy/cw-android/tree/master/Database/Constants/src/com/commonsware/android/constants
+    /**
+     * Modified from
+     * https://github.com/commonsguy/cw-android/tree/master/Database/Constants/src/com/commonsware/android/constants
+     */
     private void deleteMessage(final int index) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete)
@@ -146,9 +148,9 @@ public class ChatActivity extends AppCompatActivity {
             Log.i(TAG, "Delete failed.");
         } else {
             Log.i(TAG, "Delete successful.");
+            chatArrayList.remove(index);
+            chatAdapter.notifyDataSetChanged();
         }
-        chatArrayList.remove(index);
-        chatAdapter.notifyDataSetChanged();
     }
 
     private void createContact(final int index) {

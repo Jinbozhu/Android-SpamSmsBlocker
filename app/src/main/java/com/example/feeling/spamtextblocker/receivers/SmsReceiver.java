@@ -24,7 +24,9 @@ import com.example.feeling.spamtextblocker.models.Message;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by feeling on 2/29/16.
@@ -34,21 +36,22 @@ public class SmsReceiver extends BroadcastReceiver {
     DatabaseHelper dbHelper;
     SQLiteDatabase db;
 
-    List<String> blockList;
-    List<String> allowList;
+    Set<String> blackList;
+    Set<String> allowList;
 
     public SmsReceiver() {
-        blockList = new ArrayList<>();
-        allowList = new ArrayList<>();
+        blackList = new HashSet<>();
+        allowList = new HashSet<>();
     }
 
-    private void loadBlockListFromDataBase(Context context) {
+    private void loadBlockListFromDataBase() {
 
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         dbHelper = new DatabaseHelper(context);
+        blackList = dbHelper.getBlockedPhone();
         db = dbHelper.getWritableDatabase();
 
 //        loadBlockListFromDataBase(context);
@@ -65,13 +68,15 @@ public class SmsReceiver extends BroadcastReceiver {
             if (bundle != null) {
                 Object[] sms = (Object[]) bundle.get("pdus");
                 String msg = "";
-                Message message = null;
+                Message message;
 
                 for (Object currentObj : sms) {
                     SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) currentObj);
                     content = currentMessage.getDisplayMessageBody();
                     sender = currentMessage.getDisplayOriginatingAddress();
                     timeMillis = currentMessage.getTimestampMillis();
+
+                    boolean isSpam = blackList.contains(sender);
 
                     Date date = new Date(timeMillis);
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
@@ -87,7 +92,7 @@ public class SmsReceiver extends BroadcastReceiver {
                             timeMillis,
                             true,
                             false,
-                            false
+                            isSpam
                     );
 
 //                    insertSmsToDataBase(context, message);
@@ -98,16 +103,11 @@ public class SmsReceiver extends BroadcastReceiver {
                     // Insert operation returns the id of the inserted row.
                     // If it fails, it will return -1.
                     long id = dbHelper.insertSms(message);
-                    Log.i(TAG, "Write to SMS!!");
-                    List<Message> list = dbHelper.getLastSmsForCertainNumber();
-                    for (Message s : list) {
-                        Log.i(TAG, s.toString());
-                    }
-
                     if (id != -1) {
-                        Toast.makeText(context, "Data is inserted.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "sms is inserted.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(context, "Insert failed.", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "Inserted sms to database.");
+                        Toast.makeText(context, "Insert sms failed.", Toast.LENGTH_SHORT).show();
                     }
 
                     // Assign the id in the database to the "id" field
@@ -116,10 +116,11 @@ public class SmsReceiver extends BroadcastReceiver {
                     message.setId(id);
                     Toast.makeText(context, String.valueOf(message.getId()), Toast.LENGTH_SHORT).show();
 
-                    Log.i(TAG, "Print message " + message.toString());
+                    Log.i(TAG, "Print message: " + message.toString());
 
 //                    saveMsgToSystem(context, sender, content, timeMillis);
 
+                    // TODO: need better update strategy
                     // Update message list in conversation thread
                     // and in chat room simultaneously
                     MainActivity.convArrayList.add(0, message);

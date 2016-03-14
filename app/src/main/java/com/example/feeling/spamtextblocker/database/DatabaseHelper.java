@@ -12,7 +12,9 @@ import com.example.feeling.spamtextblocker.models.Contact;
 import com.example.feeling.spamtextblocker.models.Message;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by feeling on 3/5/16.
@@ -129,6 +131,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return msg;
     }
 
+    public List<Message> getLastBlockedSmsForCertainNumber() {
+        List<Message> sms = new ArrayList<>();
+
+        String selection = SMS_COL_IS_SPAM + " = ?";
+        String[] selectionArgs = {String.valueOf(1)};
+        String orderBy = SMS_COL_TIME + " DESC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME_SMS, null, selection, selectionArgs,
+                null, null, orderBy, String.valueOf(1));
+        if (cursor.moveToFirst()) {
+            long id = cursor.getInt(cursor.getColumnIndex(COL_ID));
+            String sender = cursor.getString(cursor.getColumnIndex(SMS_COL_SENDER));
+            String content = cursor.getString(cursor.getColumnIndex(SMS_COL_CONTENT));
+            String recipient = cursor.getString(cursor.getColumnIndex(SMS_COL_RECIPIENT));
+            long time = cursor.getInt(cursor.getColumnIndex(SMS_COL_TIME));
+            boolean isDelivered = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_DELIVERED)) == 1;
+            boolean isRead = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_READ)) == 1;
+            boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
+
+            Message msg = new Message(id, sender, content, recipient, time, isDelivered, isRead, isSpam);
+            sms.add(msg);
+        }
+        cursor.close();
+        closeDB();
+
+        return sms;
+    }
+
     public List<Message> getLastSmsForCertainNumber() {
         List<Message> sms = new ArrayList<>();
         List<String> numbers = new ArrayList<>();
@@ -216,6 +246,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_NAME_SMS, selection, new String[]{phoneNumber, phoneNumber});
     }
 
+    public long markSmsNotSpam(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(SMS_COL_IS_SPAM, false);
+
+        String selection = COL_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        return db.update(TABLE_NAME_SMS, values, selection, selectionArgs);
+    }
+
     public void moveSmsToBlocked(long id) {
 
     }
@@ -266,7 +308,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * If there is no contactId associated with phoneNumber,
      * getInt() will return 0. (contact_id column is null)
-     * <p/>
+     * <p>
      * If it returns -1, it means there is no such number in phone table.
      *
      * @param phoneNumber
@@ -299,6 +341,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] selectionArgs = {phoneNumber};
 
         return db.update(TABLE_NAME_PHONE, values, selection, selectionArgs);
+    }
+
+    public Set<String> getBlockedPhone() {
+        Set<String> blockedPhone = new HashSet<>();
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
+                PHONE_COL_CONTACT_ID + " IN (SELECT " + COL_ID + " FROM " +
+                TABLE_NAME_CONTACT + " WHERE " + CONTACT_COL_IS_ALLOWED + " = 0)";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                String number = cursor.getString(cursor.getColumnIndex(PHONE_COL_NUMBER));
+                blockedPhone.add(number);
+                Log.i("get blocked Phone", number);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        closeDB();
+        return blockedPhone;
     }
 
     public long deletePhone(long id) {

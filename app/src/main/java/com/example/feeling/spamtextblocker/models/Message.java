@@ -43,10 +43,6 @@ public class Message {
         this.isSpam = isSpam;
     }
 
-    public String getContent() {
-        return content;
-    }
-
     public long getId() {
         return id;
     }
@@ -55,8 +51,8 @@ public class Message {
         this.id = id;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public String getContent() {
+        return content;
     }
 
     public void setContent(String content) {
@@ -83,8 +79,16 @@ public class Message {
         return time;
     }
 
-    public void setTime(Date time) {
-        time = time;
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+
+    public void setIsDelivered(boolean isDelivered) {
+        this.isDelivered = isDelivered;
     }
 
     public boolean isRead() {
@@ -101,14 +105,6 @@ public class Message {
 
     public void setIsSpam(boolean isSpam) {
         this.isSpam = isSpam;
-    }
-
-    public boolean isDelivered() {
-        return isDelivered;
-    }
-
-    public void setIsDelivered(boolean isDelivered) {
-        this.isDelivered = isDelivered;
     }
 
     @Override

@@ -33,7 +33,7 @@ public class AllowlistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_allowlist);
+        setContentView(R.layout.activity_listview);
 
         setTitle("Allow list");
         dbHelper = new DatabaseHelper(this);
@@ -41,7 +41,7 @@ public class AllowlistActivity extends AppCompatActivity {
         alArrayList = new ArrayList<>();
         alAdapter = new AlAdapter(getApplicationContext(), R.layout.contact_list_element, alArrayList);
 
-        alListView = (ListView) findViewById(R.id.listViewAllow);
+        alListView = (ListView) findViewById(R.id.listView);
         alListView.setAdapter(alAdapter);
 //        alListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override

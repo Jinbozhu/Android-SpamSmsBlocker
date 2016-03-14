@@ -33,7 +33,7 @@ public class BlacklistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_allowlist);
+        setContentView(R.layout.activity_listview);
 
         setTitle("Black list");
         dbHelper = new DatabaseHelper(this);
@@ -41,7 +41,7 @@ public class BlacklistActivity extends AppCompatActivity {
         blArrayList = new ArrayList<>();
         blAdapter = new AlAdapter(getApplicationContext(), R.layout.contact_list_element, blArrayList);
 
-        blListView = (ListView) findViewById(R.id.listViewAllow);
+        blListView = (ListView) findViewById(R.id.listView);
         blListView.setAdapter(blAdapter);
 //        blListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
