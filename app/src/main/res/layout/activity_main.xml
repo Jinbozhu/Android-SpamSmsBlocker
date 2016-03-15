@@ -30,26 +30,6 @@
             fab:fab_colorPressed="@color/accent_pressed"
             fab:fab_colorRipple="@color/ripple"
             android:onClick="goToCompose"/>
-
-        <Button
-            android:id="@+id/setDefaultApp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="88dp"
-            android:text="Set to default app" />
-
-        <TextView
-            android:id="@+id/notDefaultApp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/setDefaultApp"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:text="Not default app"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
     </FrameLayout>
 
     <!-- Side navigation drawer UI -->

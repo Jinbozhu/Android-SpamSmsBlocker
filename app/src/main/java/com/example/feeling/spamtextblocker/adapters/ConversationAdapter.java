@@ -1,6 +1,7 @@
 package com.example.feeling.spamtextblocker.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,7 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LinearLayout newView;
-        Message element = getItem(position);
+        Message msg = getItem(position);
 
         // Inflate a new view if necessary.
         if (convertView == null) {
@@ -57,17 +58,24 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
         msgText = (TextView) newView.findViewById(R.id.latestConversation);
         contact = (TextView) newView.findViewById(R.id.contact);
         time = (TextView) newView.findViewById(R.id.time);
-        msgText.setText(element.getContent());
-        String sender = element.getSender();
+        msgText.setText(msg.getContent());
+        String sender = msg.getSender();
         if ("ME".equals(sender)) {
-            sender = element.getRecipient();
+            sender = msg.getRecipient();
         }
         String name = dbHelper.getNameFromContact(sender);
         contact.setText(name);
         // Convert timestamp from long integer to human-readable format.
-        long millis = element.getTime();
+        long millis = msg.getTime();
         String date = DateFormat.format("MMM dd", new Date(millis)).toString();
         time.setText(date);
+
+        // If message is not read, set font to bold.
+        if (!msg.isRead()) {
+            msgText.setTypeface(null, Typeface.BOLD);
+            contact.setTypeface(null, Typeface.BOLD);
+            time.setTypeface(null, Typeface.BOLD);
+        }
 
         return newView;
     }

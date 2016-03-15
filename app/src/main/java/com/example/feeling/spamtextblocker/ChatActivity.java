@@ -81,6 +81,17 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         loadSms(contactNumber);
+        dbHelper.markSmsForCertainNumberAsRead(contactNumber);
+    }
+
+    private void loadSms(String contactNumber) {
+        chatArrayList.clear();
+        List<Message> sms = dbHelper.getAllSmsForCertainNumber(contactNumber);
+        for (Message msg : sms) {
+            Log.i("loadSms in chat", msg.toString());
+            chatArrayList.add(msg);
+        }
+        chatAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -218,16 +229,6 @@ public class ChatActivity extends AppCompatActivity {
 
         // show it
         alertDialog.show();
-    }
-
-    private void loadSms(String contactNumber) {
-        chatArrayList.clear();
-        List<Message> sms = dbHelper.getAllSmsForCertainNumber(contactNumber);
-        for (Message msg : sms) {
-            Log.i("loadSms in chat", msg.toString());
-            chatArrayList.add(msg);
-        }
-        chatAdapter.notifyDataSetChanged();
     }
 
     /**

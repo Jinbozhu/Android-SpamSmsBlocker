@@ -42,6 +42,7 @@ import java.util.List;
  * <p/>
  * References:
  * http://blog.teamtreehouse.com/add-navigation-drawer-android
+ * https://github.com/makovkastar/FloatingActionButton
  */
 public class MainActivity extends AppCompatActivity implements AdapterView.OnClickListener {
     public static final String TAG = "MainActivity";
@@ -296,36 +297,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         convAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * References:
+     * http://stackoverflow.com/questions/21720657/how-to-set-my-sms-app-default-in-android-kitkat
+     * http://android-developers.blogspot.com/2013/10/getting-your-sms-apps-ready-for-kitkat.html
+     */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onResume() {
         super.onResume();
 
         final String myPackageName = getPackageName();
-        TextView notDefaultApp = (TextView) findViewById(R.id.notDefaultApp);
-        Button setDefaultApp = (Button) findViewById(R.id.setDefaultApp);
-
         if (!Telephony.Sms.getDefaultSmsPackage(this).equals(myPackageName)) {
-            // App is not default.
-            // Show the "not currently set as the default SMS app" interface
-            notDefaultApp.setVisibility(View.VISIBLE);
-            setDefaultApp.setVisibility(View.VISIBLE);
-
-            // Set up a button that allows the user to change the default SMS app
-            setDefaultApp.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Intent intent =
-                            new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
-                    intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME,
-                            myPackageName);
-                    startActivity(intent);
-                }
-            });
-        } else {
-            // App is the default.
-            // Hide the "not currently set as the default SMS app" interface
-            notDefaultApp.setVisibility(View.GONE);
-            setDefaultApp.setVisibility(View.GONE);
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.not_default_app)
+                    .setMessage("This is not your default SMS app. Set as your default app?")
+                    .setPositiveButton(R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+                                    Intent intent =
+                                            new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
+                                    intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME,
+                                            myPackageName);
+                                    startActivity(intent);
+                                }
+                            })
+                    .setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+                                    // ignore, just dismiss
+                                }
+                            })
+                    .show();
         }
     }
 
@@ -558,18 +563,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
     }
 
-    /**
-     * From https://www.youtube.com/watch?v=t4Szfni9luM
-     * at 12:00, but not used
-     */
-//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        try {
-//            Message msg = convArrayList.get(position);
-//            String content = msg.getContent();
-//            String address = msg.getSender();
-//
-//        }
-//    }
     public void goToCompose(View v) {
         Intent intent = new Intent(MainActivity.this, ComposeSmsActivity.class);
         startActivity(intent);

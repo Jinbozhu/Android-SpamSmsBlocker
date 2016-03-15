@@ -200,6 +200,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return fetchFromDatabase(selectQuery);
     }
 
+    public void markSmsForCertainNumberAsRead(String phoneNumber) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(SMS_COL_IS_READ, true);
+
+        String selection = SMS_COL_SENDER + " = ? OR " + SMS_COL_RECIPIENT + " = ?";
+        String[] selectionArgs = {phoneNumber, phoneNumber};
+
+        db.update(TABLE_NAME_SMS, values, selection, selectionArgs);
+    }
+
     private List<Message> fetchFromDatabase(String selectQuery) {
         List<Message> sms = new ArrayList<>();
 

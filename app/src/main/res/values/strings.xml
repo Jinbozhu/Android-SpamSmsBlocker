@@ -15,6 +15,7 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="not_spam">Not Spam</string>
+    <string name="not_default_app">Not default app</string>
 
     <!-- Strings related to Settings -->
 
