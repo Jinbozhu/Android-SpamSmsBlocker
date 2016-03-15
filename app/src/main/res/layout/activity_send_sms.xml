@@ -1,57 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/receiveLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1">
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView"
-        android:text="Compose New Message"
-        android:layout_gravity="center_horizontal"
+        android:id="@+id/toPhone"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/textViewPhoneNumber"
-        android:text="Phone number"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="To:"
+        android:textSize="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
 
     <EditText
         android:id="@+id/editTextPhoneNo"
-        android:layout_width="match_parent"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:inputType="phone"/>
+        android:inputType="phone"
+        android:layout_toRightOf="@+id/toPhone"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/addContact"
+        android:layout_toLeftOf="@+id/addContact" />
 
-    <TextView
-        android:id="@+id/textViewMessage"
-        android:text="SMS message"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <ImageButton
+        android:id="@+id/sendSmsButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="right"
+        android:background="@drawable/ic_send"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="send"/>
 
     <EditText
         android:id="@+id/editTextSMS"
-        android:layout_width="match_parent"
+        android:layout_width="246dp"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"/>
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/sendSmsButton"
+        android:layout_toStartOf="@+id/sendSmsButton" />
 
-    <Button
-        android:id="@+id/sendSmsButton"
-        android:text="Send"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="send"/>
+    <ImageButton
+        android:id="@+id/addContact"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/ic_account_box_black_24dp"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"/>
 
-    <Button
-        android:id="@+id/inboxButton"
-        android:text="Inbox"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="goToInbox"/>
-</LinearLayout>
+
+</RelativeLayout>

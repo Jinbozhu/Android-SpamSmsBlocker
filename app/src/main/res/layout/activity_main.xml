@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- The first child in the layout is for the main Activity UI-->
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -14,29 +15,21 @@
         <ListView
             android:id="@+id/SMSList"
             android:layout_width="match_parent"
-            android:layout_height="450dp"
+            android:layout_height="match_parent"
             android:layout_above="@+id/composeButton"
             android:layout_alignParentTop="true" />
 
-        <Button
-            android:id="@+id/composeButton"
+        <com.melnykov.fab.FloatingActionButton
+            android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:onClick="goToCompose"
-            android:text="Compose" />
-
-        <TextView
-            android:id="@+id/notDefaultApp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/setDefaultApp"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:text="Not default app"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_add_white_24dp"
+            fab:fab_colorNormal="@color/accent"
+            fab:fab_colorPressed="@color/accent_pressed"
+            fab:fab_colorRipple="@color/ripple"
+            android:onClick="goToCompose"/>
 
         <Button
             android:id="@+id/setDefaultApp"
@@ -44,10 +37,20 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_horizontal|bottom"
             android:layout_marginBottom="88dp"
             android:text="Set to default app" />
-    </RelativeLayout>
+
+        <TextView
+            android:id="@+id/notDefaultApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/setDefaultApp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:text="Not default app"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </FrameLayout>
 
     <!-- Side navigation drawer UI -->
     <ListView

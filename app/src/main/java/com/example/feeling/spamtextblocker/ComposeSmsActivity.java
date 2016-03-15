@@ -3,11 +3,15 @@ package com.example.feeling.spamtextblocker;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.models.Message;
@@ -15,12 +19,14 @@ import com.example.feeling.spamtextblocker.models.Message;
 /**
  * Created by feeling on 3/1/16.
  */
-public class ComposeSmsActivity extends Activity {
+public class ComposeSmsActivity extends AppCompatActivity {
     public static final String TAG = "ComposeSmsActivity";
     static DatabaseHelper dbHelper;
-    Button sendSmsButton;
+    ImageButton sendSmsButton;
     EditText phoneNoText;
     EditText messageText;
+    boolean phoneOK;
+    boolean msgOK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +35,74 @@ public class ComposeSmsActivity extends Activity {
 
         dbHelper = new DatabaseHelper(this);
 
-        sendSmsButton = (Button) findViewById(R.id.sendSmsButton);
+        sendSmsButton = (ImageButton) findViewById(R.id.sendSmsButton);
+        sendSmsButton.setEnabled(false);
         phoneNoText = (EditText) findViewById(R.id.editTextPhoneNo);
+        phoneNoText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                checkPhoneNoLength();
+            }
+        });
         messageText = (EditText) findViewById(R.id.editTextSMS);
+        messageText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                checkMessageLength();
+            }
+        });
+    }
+
+    /**
+     * Check the length of message in the chat box.
+     * If the length is not 0, enable send button.
+     */
+    private void checkPhoneNoLength() {
+        if (phoneNoText.getText().toString().length() > 0) {
+            phoneOK = true;
+            sendSmsButton.setEnabled(msgOK);
+        } else {
+            phoneOK = false;
+            sendSmsButton.setEnabled(false);
+        }
+    }
+
+    /**
+     * Check the length of message in the chat box.
+     * If the length is not 0, enable send button.
+     */
+    private void checkMessageLength() {
+        if (messageText.getText().toString().length() > 0) {
+            msgOK = true;
+            sendSmsButton.setEnabled(phoneOK && msgOK);
+        } else {
+            msgOK = false;
+            sendSmsButton.setEnabled(false);
+        }
     }
 
     public void send(View v) {
         sendSms();
-        // TODO: start new intent
+        String phoneNumber = phoneNoText.getText().toString();
+        Intent intent = new Intent(ComposeSmsActivity.this, ChatActivity.class);
+        intent.putExtra("contactNumber", phoneNumber);
+        startActivity(intent);
+
+        clearFields();
     }
+
     public void sendSms() {
         final String contactNumber = phoneNoText.getText().toString();
         final String sms = messageText.getText().toString();
@@ -112,20 +177,24 @@ public class ComposeSmsActivity extends Activity {
 
         // Update message list in conversation thread
         // and in chat room simultaneously
+        // Call ChatActivity.chatArrayList throws NullPointerException.
         MainActivity.convArrayList.add(0, message);
         MainActivity.convAdapter.notifyDataSetChanged();
         ChatActivity.chatArrayList.add(message);
         ChatActivity.chatAdapter.notifyDataSetChanged();
 
         if (!dbHelper.containsPhone(contactNumber)) {
-            Log.i(TAG, "in ComposeSmsActivity");
+            Log.i(TAG, "insert phone number to phone table.");
             dbHelper.insertPhone(contactNumber);
         }
         dbHelper.closeDB();         // need to close DB
     }
 
-    public void goToInbox(View v) {
-        Intent intent = new Intent(ComposeSmsActivity.this, MainActivity.class);
-        startActivity(intent);
+    /**
+     * Clear chat box when send button is clicked.
+     */
+    private void clearFields() {
+        phoneNoText.getText().clear();
+        messageText.getText().clear();
     }
 }

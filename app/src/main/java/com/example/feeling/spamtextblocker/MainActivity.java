@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -26,9 +27,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.feeling.spamtextblocker.adapters.ChatAdapter;
 import com.example.feeling.spamtextblocker.adapters.ConversationAdapter;
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.models.Message;
+import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.ScrollDirectionListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     public static List<Message> convArrayList;
     public static ArrayAdapter convAdapter;
     private ListView convListView;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        ChatActivity.chatArrayList = new ArrayList<>();
+        ChatActivity.chatAdapter = new ChatAdapter(getApplicationContext(),
+                R.layout.chat_list_elemnt, ChatActivity.chatArrayList);
+
         convArrayList = new ArrayList<>();
         convListView = (ListView) findViewById(R.id.SMSList);
         convAdapter = new ConversationAdapter(this, R.layout.conversation_list_element, convArrayList);
@@ -88,6 +97,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                 }
                 intent.putExtra("contactNumber", contactNumber);
                 startActivity(intent);
+            }
+        });
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.attachToListView(convListView, new ScrollDirectionListener() {
+            @Override
+            public void onScrollDown() {
+                Log.d("ListViewFragment", "onScrollDown()");
+            }
+
+            @Override
+            public void onScrollUp() {
+                Log.d("ListViewFragment", "onScrollUp()");
+            }
+        }, new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                Log.d("ListViewFragment", "onScrollStateChanged()");
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                Log.d("ListViewFragment", "onScroll()");
             }
         });
 
