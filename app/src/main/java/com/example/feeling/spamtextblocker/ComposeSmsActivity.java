@@ -1,6 +1,5 @@
 package com.example.feeling.spamtextblocker;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +8,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -31,8 +29,9 @@ public class ComposeSmsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_sms);
+        setContentView(R.layout.activity_compose);
 
+        setTitle("Compose");
         dbHelper = new DatabaseHelper(this);
 
         sendSmsButton = (ImageButton) findViewById(R.id.sendSmsButton);

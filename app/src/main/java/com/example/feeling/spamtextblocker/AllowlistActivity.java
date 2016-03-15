@@ -1,5 +1,7 @@
 package com.example.feeling.spamtextblocker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -90,7 +92,65 @@ public class AllowlistActivity extends AppCompatActivity {
         }
     }
 
-    public void addToBlacklist(int index) {
+    public void deleteContact(final int index) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete)
+                .setMessage("Contact will be deleted.")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                processDeleteContact(index);
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // ignore, just dismiss
+                            }
+                        })
+                .show();
+    }
+
+    private void processDeleteContact(int index) {
+        Contact contact = alArrayList.get(index);
+        long contactId = contact.getId();
+        long delId = dbHelper.deleteContact(contactId);
+        if (delId == -1) {
+            Log.i(TAG, "delete contact failed.");
+            Toast.makeText(this, "Failed to delete contact.", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.i(TAG, "delete contact successful");
+            Toast.makeText(this, "Delete contact successful.", Toast.LENGTH_SHORT).show();
+            // Update list view
+            alArrayList.remove(index);
+            alAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void addToBlacklist(final int index) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.add_to_blacklist)
+                .setMessage("Add to blacklist?")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                processAddToBlacklist(index);
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // ignore, just dismiss
+                            }
+                        })
+                .show();
+    }
+
+    private void processAddToBlacklist(int index) {
         Contact contact = alArrayList.get(index);
         long contactId = contact.getId();
 
@@ -102,22 +162,6 @@ public class AllowlistActivity extends AppCompatActivity {
         } else {
             Log.i(TAG, "added to blacklist.");
             Toast.makeText(this, "Contact blocked.", Toast.LENGTH_SHORT).show();
-            // Update list view
-            alArrayList.remove(index);
-            alAdapter.notifyDataSetChanged();
-        }
-    }
-
-    public void deleteContact(int index) {
-        Contact contact = alArrayList.get(index);
-        long contactId = contact.getId();
-        long delId = dbHelper.deleteContact(contactId);
-        if (delId == -1) {
-            Log.i(TAG, "delete contact failed.");
-            Toast.makeText(this, "Failed to delete contact.", Toast.LENGTH_SHORT).show();
-        } else {
-            Log.i(TAG, "delete contact successful");
-            Toast.makeText(this, "Delete contact successful.", Toast.LENGTH_SHORT).show();
             // Update list view
             alArrayList.remove(index);
             alAdapter.notifyDataSetChanged();

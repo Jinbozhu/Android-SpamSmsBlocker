@@ -21,10 +21,8 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.adapters.ChatAdapter;
@@ -131,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
     public void loadSmsFromDatabase() {
         convArrayList.clear();
-        List<Message> allSms = dbHelper.getLastSmsForCertainNumber();
+        List<Message> allSms = dbHelper.getLastSmsForAllowedNumber();
 
         for (int i = allSms.size() - 1; i >= 0; i--) {
             convArrayList.add(allSms.get(i));

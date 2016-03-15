@@ -2,22 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="8dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Name:"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:id="@+id/textViewName" />
 
     <EditText
+        android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:text=""
         android:ems="10"
-        android:id="@+id/editTextName"
         android:layout_gravity="center_horizontal" />
 
     <TextView
@@ -25,6 +28,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Phone:"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:id="@+id/textViewPhone" />
 
     <EditText

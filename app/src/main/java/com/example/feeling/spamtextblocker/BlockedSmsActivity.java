@@ -85,7 +85,7 @@ public class BlockedSmsActivity extends AppCompatActivity {
 
     public void loadSmsFromDatabase() {
         blockedArrayList.clear();
-        List<Message> allSms = dbHelper.getLastSmsForCertainNumber();
+        List<Message> allSms = dbHelper.getLastBlockedSmsForCertainNumber();
 
         for (int i = allSms.size() - 1; i >= 0; i--) {
             blockedArrayList.add(allSms.get(i));
@@ -253,19 +253,6 @@ public class BlockedSmsActivity extends AppCompatActivity {
         Log.v("------ReceiveActivity", "In updateList() method.");
     }
 
-
-    /**
-     * From https://www.youtube.com/watch?v=t4Szfni9luM
-     * at 12:00, but not used
-     */
-//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        try {
-//            Message msg = blockedArrayList.get(position);
-//            String content = msg.getContent();
-//            String address = msg.getSender();
-//
-//        }
-//    }
     public void goToCompose(View v) {
         Intent intent = new Intent(BlockedSmsActivity.this, ComposeSmsActivity.class);
         startActivity(intent);

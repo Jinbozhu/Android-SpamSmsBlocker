@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.models.Contact;
 import com.example.feeling.spamtextblocker.models.Message;
@@ -159,18 +158,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sms;
     }
 
-    public List<Message> getLastSmsForCertainNumber() {
+    public List<Message> getLastSmsForAllowedNumber() {
         List<Message> sms = new ArrayList<>();
         List<String> numbers = new ArrayList<>();
-        numbers.addAll(getPhone());
+        numbers.addAll(getAllowedPhone());
 
         for (String phoneNumber : numbers) {
-            String selectQuery = "SELECT * FROM " + TABLE_NAME_SMS + " WHERE " +
-                    SMS_COL_SENDER + " = '" + phoneNumber + "' OR " +
-                    SMS_COL_RECIPIENT + " = '" + phoneNumber +
-                    "' ORDER BY " + SMS_COL_TIME + " DESC LIMIT 1";
+            String selection = SMS_COL_SENDER + " = ?" + " OR " +
+                    SMS_COL_RECIPIENT + " = ?";
+            String[] selectionArgs = {phoneNumber, phoneNumber};
+            String orderBy = SMS_COL_TIME + " DESC ";
             SQLiteDatabase db = this.getReadableDatabase();
-            Cursor cursor = db.rawQuery(selectQuery, null);
+            Cursor cursor = db.query(TABLE_NAME_SMS, null, selection, selectionArgs, null, null, orderBy, String.valueOf(1));
             if (cursor.moveToFirst()) {
                 long id = cursor.getInt(cursor.getColumnIndex(COL_ID));
                 String sender = cursor.getString(cursor.getColumnIndex(SMS_COL_SENDER));
@@ -315,17 +314,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_NAME_PHONE, null, values);
     }
 
-    public List<String> getPhone() {
+    public List<String> getAllowedPhone() {
         List<String> numbers = new ArrayList<>();
 
-        String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE;
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
+                PHONE_COL_CONTACT_ID + " IN (SELECT " + COL_ID + " FROM " +
+                TABLE_NAME_CONTACT + " WHERE " + CONTACT_COL_IS_ALLOWED + " = 1)";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 String number = cursor.getString(cursor.getColumnIndex(PHONE_COL_NUMBER));
                 numbers.add(number);
-                Log.i("getPhone", number);
+                Log.i("getAllowedPhone", number);
             } while (cursor.moveToNext());
         }
         cursor.close();

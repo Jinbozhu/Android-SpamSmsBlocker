@@ -11,20 +11,33 @@
         android:layout_height="wrap_content"
         android:text="To:"
         android:textSize="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="15dp"
         android:layout_marginLeft="8dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"/>
 
     <EditText
         android:id="@+id/editTextPhoneNo"
-        android:layout_width="280dp"
+        android:layout_width="270dp"
         android:layout_height="wrap_content"
         android:inputType="phone"
         android:layout_toRightOf="@+id/toPhone"
+        android:layout_marginTop="8dp"
         android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/toPhone"
         android:layout_toStartOf="@+id/addContact"
         android:layout_toLeftOf="@+id/addContact" />
+
+    <ImageButton
+        android:id="@+id/addContact"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/ic_account_box_black_24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginEnd="6dp"/>
 
     <ImageButton
         android:id="@+id/sendSmsButton"
@@ -45,23 +58,14 @@
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:layout_marginTop="8dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_toLeftOf="@+id/sendSmsButton"
-        android:layout_toStartOf="@+id/sendSmsButton" />
+        android:layout_toStartOf="@+id/sendSmsButton"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"/>
 
-    <ImageButton
-        android:id="@+id/addContact"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:background="@drawable/ic_account_box_black_24dp"
-        android:layout_marginTop="8dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="8dp"
-        android:layout_marginEnd="8dp"/>
 
 
 </RelativeLayout>
