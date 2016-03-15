@@ -239,7 +239,7 @@ public class ChatActivity extends AppCompatActivity {
                                 } else {
                                     Log.i(TAG, "insert contact successful.");
                                     // Update phone table's contact_id column
-                                    long id = dbHelper.updatePhone(phoneNumber2, insertId);
+                                    long id = dbHelper.insertPhone(phoneNumber2, insertId);
                                     if (id == -1) {
                                         Log.i(TAG, "update phone failed.");
                                     } else {
@@ -318,14 +318,6 @@ public class ChatActivity extends AppCompatActivity {
             dbHelper.insertPhone(contactNumber);
         }
         dbHelper.closeDB();         // need to close DB
-//        long time = System.currentTimeMillis();
-
-//        /**
-//         * Add the posted message to chatArrayList, and call notifyDataSetChanged()
-//         * on ArrayAdapter, then it will be shown on the screen immediately.
-//         */
-//        chatArrayList.add(new Message(0, "ME", message, contactNumber, time, true, true, false));
-//        chatAdapter.notifyDataSetChanged();
     }
 
     /**

@@ -293,11 +293,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Phone table operations
     // Check if the phone table has the given number or not
     public boolean containsPhone(String phoneNumber) {
-        String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
-                PHONE_COL_NUMBER + " = '" + phoneNumber + "'";
+        String selection = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
+                PHONE_COL_NUMBER + " = ?";
+        String[] selectionArgs = {phoneNumber};
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.query(TABLE_NAME_PHONE, null, selection, selectionArgs,
+                null, null, null);
         Log.i(TAG, String.valueOf(cursor.getCount()));
         boolean res = cursor.getCount() != 0;
         cursor.close();
@@ -310,6 +312,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(PHONE_COL_NUMBER, phoneNumber);
+
+        return db.insert(TABLE_NAME_PHONE, null, values);
+    }
+
+    public long insertPhone(String phoneNumber, long contactId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PHONE_COL_NUMBER, phoneNumber);
+        values.put(PHONE_COL_CONTACT_ID, contactId);
 
         return db.insert(TABLE_NAME_PHONE, null, values);
     }
@@ -478,14 +490,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return blockedContact;
     }
 
-    public void updateContact(long id, String name, boolean isAllowed) {
+    public long updateContact(long id, String name, boolean isAllowed) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(CONTACT_COL_NAME, name);
         values.put(CONTACT_COL_IS_ALLOWED, isAllowed);
 
-        db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
+        return db.update(TABLE_NAME_CONTACT, values, COL_ID + " = ?", new String[]{String.valueOf(id)});
     }
 
     /**

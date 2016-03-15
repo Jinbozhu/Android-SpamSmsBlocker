@@ -3,6 +3,9 @@
 
 
     <item
+        android:id="@+id/edit_contact"
+        android:title="@string/edit_contact" />
+    <item
         android:id="@+id/delete_contact"
         android:title="@string/delete_contact" />
     <item

@@ -6,16 +6,19 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.feeling.spamtextblocker.adapters.AlAdapter;
 import com.example.feeling.spamtextblocker.database.DatabaseHelper;
 import com.example.feeling.spamtextblocker.models.Contact;
+import com.example.feeling.spamtextblocker.models.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +84,9 @@ public class AllowlistActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int index = info.position;
         switch (item.getItemId()) {
+            case R.id.edit_contact:
+                editContact(index);
+                return true;
             case R.id.delete_contact:
                 deleteContact(index);
                 return true;
@@ -92,10 +98,62 @@ public class AllowlistActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This option can only rename the contact for now.
+     * @param index
+     */
+    public void editContact(int index) {
+        Contact contact = alArrayList.get(index);
+        final long contactId = contact.getId();
+
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.rename_contact_dialog, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        // set prompts.xml to AlertDialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText nameInput = (EditText) promptsView.findViewById(R.id.editTextName);
+
+        // set dialog message
+        alertDialogBuilder
+                .setTitle(R.string.create_contact)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // get user input and set it to result
+                                // edit text
+                                String contactName = nameInput.getText().toString();
+                                long updateId = dbHelper.updateContact(contactId, contactName, true);
+                                if (updateId == -1) {
+                                    Log.i(TAG, "update contact failed.");
+                                } else {
+                                    Log.i(TAG, "update contact successful.");
+                                }
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
     public void deleteContact(final int index) {
+        String name = alArrayList.get(index).getName();
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete)
-                .setMessage("Contact will be deleted.")
+                .setMessage(name + " will be deleted.")
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,
@@ -130,9 +188,10 @@ public class AllowlistActivity extends AppCompatActivity {
     }
 
     public void addToBlacklist(final int index) {
+        String name = alArrayList.get(index).getName();
         new AlertDialog.Builder(this)
                 .setTitle(R.string.add_to_blacklist)
-                .setMessage("Add to blacklist?")
+                .setMessage("Add " + name + " to blacklist?")
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,

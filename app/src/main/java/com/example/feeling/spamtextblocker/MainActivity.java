@@ -440,11 +440,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                                 } else {
                                     Log.i(TAG, "insert contact successful.");
                                     // Update phone table's contact_id column
-                                    long id = dbHelper.updatePhone(phoneNumber2, insertId);
+                                    long id = dbHelper.insertPhone(phoneNumber2, insertId);
                                     if (id == -1) {
-                                        Log.i(TAG, "update phone failed.");
+                                        Log.i(TAG, "insert phone failed.");
                                     } else {
-                                        Log.i(TAG, "update phone successful.");
+                                        Log.i(TAG, "insert phone successful.");
                                     }
                                 }
                             }
