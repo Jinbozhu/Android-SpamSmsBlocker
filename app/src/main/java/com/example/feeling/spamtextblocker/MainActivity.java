@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     private ArrayAdapter<String> drawerAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private String mActivityTitle;
+    private String mActivityTitle = "Message";
 
     public static List<Message> convArrayList;
     public static ArrayAdapter convAdapter;
@@ -61,14 +61,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setTitle("Message");
         setContentView(R.layout.activity_main);
+        setTitle(mActivityTitle);
 
         dbHelper = new DatabaseHelper(this);
 
         drawerListView = (ListView) findViewById(R.id.navList);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mActivityTitle = getTitle().toString();
 
         addDrawerItems();
         setupDrawer();
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
     public void loadSmsFromDatabase() {
         convArrayList.clear();
-        List<Message> allSms = dbHelper.getLastSmsForAllowedNumber();
+        List<Message> allSms = dbHelper.getLastSmsForNumbersExceptBlocked();
 
         for (int i = allSms.size() - 1; i >= 0; i--) {
             convArrayList.add(allSms.get(i));
@@ -401,7 +400,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
             phoneNumber = msg.getRecipient();
         }
 
-        long contactId = dbHelper.getContactIdFromPhoneTable(phoneNumber);
+        final long phoneId = dbHelper.getPhoneId(phoneNumber);
+        final boolean isPhoneExist = phoneId != 0;
+        final long contactId = dbHelper.getContactIdFromPhoneTable(phoneNumber);
 
         // If there is no contactId associated to phoneNumber, the
         // return value is 0.
@@ -430,8 +431,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                // get user input and set it to result
-                                // edit text
+                                // get user input and set it to result edit text
+                                // need to deal with phone number change
                                 String contactName = nameInput.getText().toString();
                                 String phoneNumber2 = phoneInput.getText().toString();
                                 long insertId = dbHelper.insertContact(contactName, true);
@@ -439,12 +440,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                                     Log.i(TAG, "insert contact failed.");
                                 } else {
                                     Log.i(TAG, "insert contact successful.");
+                                    Toast.makeText(getApplicationContext(), "Contact " + contactName + " created.",
+                                            Toast.LENGTH_SHORT).show();
                                     // Update phone table's contact_id column
-                                    long id = dbHelper.insertPhone(phoneNumber2, insertId);
-                                    if (id == -1) {
-                                        Log.i(TAG, "insert phone failed.");
+                                    if (!isPhoneExist) {
+                                        long id = dbHelper.insertPhone(phoneNumber2, insertId);
+                                        if (id == -1) {
+                                            Log.i(TAG, "insert phone failed.");
+                                        } else {
+                                            Log.i(TAG, "insert phone successful.");
+                                        }
                                     } else {
-                                        Log.i(TAG, "insert phone successful.");
+                                        long id = dbHelper.updatePhone(phoneNumber2, insertId);
+                                        if (id == -1) {
+                                            Log.i(TAG, "update phone failed.");
+                                        } else {
+                                            Log.i(TAG, "update phone successful.");
+                                        }
                                     }
                                 }
                             }

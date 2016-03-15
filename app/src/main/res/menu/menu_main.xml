@@ -17,5 +17,4 @@
         android:title="Search"
         app:showAsAction="always" />
 
-
 </menu>

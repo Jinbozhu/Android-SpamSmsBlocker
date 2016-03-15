@@ -1,5 +1,7 @@
 package com.example.feeling.spamtextblocker.receivers;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -11,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.ContactsContract;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
@@ -77,6 +80,7 @@ public class SmsReceiver extends BroadcastReceiver {
                     timeMillis = currentMessage.getTimestampMillis();
 
                     boolean isSpam = blackList.contains(sender);
+                    Log.i(TAG, "is spam: " + isSpam);
 
                     Date date = new Date(timeMillis);
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
@@ -138,7 +142,7 @@ public class SmsReceiver extends BroadcastReceiver {
             Log.e("SmsReceiver", "Exception: " + e.getMessage());
             e.printStackTrace();
         }
-//        notify(sender, content);
+//        notify(context, sender, content);
     }
 
     // References: https://www.youtube.com/watch?v=g4_1UOFNLEY
@@ -167,21 +171,21 @@ public class SmsReceiver extends BroadcastReceiver {
     }
 
     // Giving me "nullPointerException when call getPackageName()"
-//    public void notify(String sender, String text){
-//        Intent intent = new Intent(mContext, MainActivity.class);
-//        PendingIntent pIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
-//
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(mContext)
-//                        .setContentTitle(sender)
-//                        .setContentText(text)
-//                        .setContentIntent(pIntent);
-//
-//        NotificationManager mNotificationManager =
-//                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-//        Log.i("rishab", "notify ");
-//        mNotificationManager.notify(0, mBuilder.build());
-//    }
+    public void notify(Context mContext, String sender, String text){
+        Intent intent = new Intent(mContext, MainActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(mContext)
+                        .setContentTitle(sender)
+                        .setContentText(text)
+                        .setContentIntent(pIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        Log.i(TAG, "notify ");
+        mNotificationManager.notify(0, mBuilder.build());
+    }
 
     /**
      * Write to content://sms/sent works. Even though I want to

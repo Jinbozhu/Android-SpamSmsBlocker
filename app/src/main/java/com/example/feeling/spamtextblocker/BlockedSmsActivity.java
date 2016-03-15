@@ -106,12 +106,41 @@ public class BlockedSmsActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        // TODO
-        //noinspection SimplifiableIfStatement
-
+        if (id == R.id.delete_all) {
+            deleteAll();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteAll() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_all)
+                .setMessage("All messages will be deleted.")
+                .setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                processDeleteAll();
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // ignore, just dismiss
+                            }
+                        })
+                .show();
+    }
+
+    private void processDeleteAll() {
+        dbHelper.clearBlockedSms();
+        Log.i(TAG, "All messages deleted.");
+        Toast.makeText(this, "All blocked messages deleted.", Toast.LENGTH_SHORT).show();
+
+        blockedArrayList.clear();
+        blockedAdapter.notifyDataSetChanged();
     }
 
     @Override

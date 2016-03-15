@@ -158,7 +158,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sms;
     }
 
-    public List<Message> getLastSmsForAllowedNumber() {
+    public List<Message> getLastSmsForNumbersExceptBlocked() {
         List<Message> sms = new ArrayList<>();
         List<String> numbers = new ArrayList<>();
         numbers.addAll(getAllowedPhone());
@@ -263,6 +263,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_NAME_SMS, selection, new String[]{String.valueOf(0)});
     }
 
+    public void clearBlockedSms() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = SMS_COL_IS_SPAM + " = ?";
+        db.delete(TABLE_NAME_SMS, selection, new String[]{String.valueOf(1)});
+    }
+
     public void markAllSmsInInboxRead() {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -293,8 +299,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Phone table operations
     // Check if the phone table has the given number or not
     public boolean containsPhone(String phoneNumber) {
-        String selection = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
-                PHONE_COL_NUMBER + " = ?";
+        String selection = PHONE_COL_NUMBER + " = ?";
         String[] selectionArgs = {phoneNumber};
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -305,6 +310,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         closeDB();
         return res;
+    }
+
+    public long getPhoneId(String phoneNumber) {
+        long phoneId = 0;
+
+        String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE +
+                " WHERE " + PHONE_COL_NUMBER + " = '" + phoneNumber + "'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            // If there is no phoneId associated with phoneNumber,
+            // getInt() will return 0. (contact_id column is null)
+            phoneId = cursor.getInt(cursor.getColumnIndex(COL_ID));
+        }
+        cursor.close();
+        closeDB();
+        return phoneId;
     }
 
     public long insertPhone(String phoneNumber) {
@@ -330,7 +352,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<String> numbers = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + TABLE_NAME_PHONE + " WHERE " +
-                PHONE_COL_CONTACT_ID + " IN (SELECT " + COL_ID + " FROM " +
+                PHONE_COL_CONTACT_ID + " IS NULL OR " + PHONE_COL_CONTACT_ID +
+                " IN (SELECT " + COL_ID + " FROM " +
                 TABLE_NAME_CONTACT + " WHERE " + CONTACT_COL_IS_ALLOWED + " = 1)";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
