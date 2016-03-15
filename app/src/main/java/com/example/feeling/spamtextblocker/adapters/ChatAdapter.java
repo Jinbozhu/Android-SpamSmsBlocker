@@ -3,6 +3,7 @@ package com.example.feeling.spamtextblocker.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.example.feeling.spamtextblocker.R;
 import com.example.feeling.spamtextblocker.models.Message;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -54,7 +56,9 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         content.setText(msg.getContent());
         // Convert timestamp from long integer to human-readable format.
         long millis = msg.getTime();
-        String date = DateFormat.format("h:mm aa", new Date(millis)).toString();
+        Log.i("timem in mills", String.valueOf(millis));
+//        String date = DateFormat.format("h:mm a", new Date(millis)).toString();
+        String date = new SimpleDateFormat("h:mm a").format(new Date(millis));
         time.setText(date);
 
         LinearLayout singleMessageContainer

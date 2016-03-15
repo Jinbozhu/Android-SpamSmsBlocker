@@ -144,7 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String sender = cursor.getString(cursor.getColumnIndex(SMS_COL_SENDER));
             String content = cursor.getString(cursor.getColumnIndex(SMS_COL_CONTENT));
             String recipient = cursor.getString(cursor.getColumnIndex(SMS_COL_RECIPIENT));
-            long time = cursor.getInt(cursor.getColumnIndex(SMS_COL_TIME));
+            long time = cursor.getLong(cursor.getColumnIndex(SMS_COL_TIME));
             boolean isDelivered = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_DELIVERED)) == 1;
             boolean isRead = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_READ)) == 1;
             boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
@@ -175,7 +175,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String sender = cursor.getString(cursor.getColumnIndex(SMS_COL_SENDER));
                 String content = cursor.getString(cursor.getColumnIndex(SMS_COL_CONTENT));
                 String recipient = cursor.getString(cursor.getColumnIndex(SMS_COL_RECIPIENT));
-                long time = cursor.getInt(cursor.getColumnIndex(SMS_COL_TIME));
+                long time = cursor.getLong(cursor.getColumnIndex(SMS_COL_TIME));
                 boolean isDelivered = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_DELIVERED)) == 1;
                 boolean isRead = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_READ)) == 1;
                 boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
@@ -222,7 +222,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String sender = cursor.getString(cursor.getColumnIndex(SMS_COL_SENDER));
                 String content = cursor.getString(cursor.getColumnIndex(SMS_COL_CONTENT));
                 String recipient = cursor.getString(cursor.getColumnIndex(SMS_COL_RECIPIENT));
-                long time = cursor.getInt(cursor.getColumnIndex(SMS_COL_TIME));
+                long time = cursor.getLong(cursor.getColumnIndex(SMS_COL_TIME));
                 boolean isDelivered = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_DELIVERED)) == 1;
                 boolean isRead = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_READ)) == 1;
                 boolean isSpam = cursor.getInt(cursor.getColumnIndex(SMS_COL_IS_SPAM)) == 1;
