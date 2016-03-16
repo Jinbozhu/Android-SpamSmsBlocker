@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker;
+package com.example.feeling.spamsmsblocker;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

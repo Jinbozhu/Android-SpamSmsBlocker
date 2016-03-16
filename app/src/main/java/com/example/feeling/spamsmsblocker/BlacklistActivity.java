@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker;
+package com.example.feeling.spamsmsblocker;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +11,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.feeling.spamtextblocker.adapters.AlAdapter;
-import com.example.feeling.spamtextblocker.database.DatabaseHelper;
-import com.example.feeling.spamtextblocker.models.Contact;
+import com.example.feeling.spamsmsblocker.adapters.AlAdapter;
+import com.example.feeling.spamsmsblocker.database.DatabaseHelper;
+import com.example.feeling.spamsmsblocker.models.Contact;
 
 import java.util.ArrayList;
 import java.util.List;

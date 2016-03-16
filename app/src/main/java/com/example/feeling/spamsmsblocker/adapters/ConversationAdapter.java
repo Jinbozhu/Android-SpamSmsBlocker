@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker.adapters;
+package com.example.feeling.spamsmsblocker.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -10,9 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.feeling.spamtextblocker.R;
-import com.example.feeling.spamtextblocker.database.DatabaseHelper;
-import com.example.feeling.spamtextblocker.models.Message;
+import com.example.feeling.spamsmsblocker.R;
+import com.example.feeling.spamsmsblocker.database.DatabaseHelper;
+import com.example.feeling.spamsmsblocker.models.Message;
 
 import java.util.Date;
 import java.util.List;

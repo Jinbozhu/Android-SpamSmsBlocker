@@ -1,6 +1,4 @@
-package com.example.feeling.spamtextblocker.models;
-
-import java.util.List;
+package com.example.feeling.spamsmsblocker.models;
 
 /**
  * Created by feeling on 3/5/16.

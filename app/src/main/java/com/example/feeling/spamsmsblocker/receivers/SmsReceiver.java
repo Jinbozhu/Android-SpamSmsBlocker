@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker.receivers;
+package com.example.feeling.spamsmsblocker.receivers;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,17 +18,14 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.feeling.spamtextblocker.ChatActivity;
-import com.example.feeling.spamtextblocker.MainActivity;
-import com.example.feeling.spamtextblocker.database.DatabaseHelper;
-import com.example.feeling.spamtextblocker.database.SmsDatabase;
-import com.example.feeling.spamtextblocker.models.Message;
+import com.example.feeling.spamsmsblocker.ChatActivity;
+import com.example.feeling.spamsmsblocker.MainActivity;
+import com.example.feeling.spamsmsblocker.database.DatabaseHelper;
+import com.example.feeling.spamsmsblocker.models.Message;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**

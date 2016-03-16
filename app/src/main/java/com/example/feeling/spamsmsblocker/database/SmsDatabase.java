@@ -1,11 +1,8 @@
-package com.example.feeling.spamtextblocker.database;
+package com.example.feeling.spamsmsblocker.database;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
-import com.example.feeling.spamtextblocker.models.Message;
+import com.example.feeling.spamsmsblocker.models.Message;
 
 import java.util.ArrayList;
 import java.util.List;

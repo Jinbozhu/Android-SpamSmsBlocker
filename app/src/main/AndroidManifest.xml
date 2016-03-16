@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.feeling.spamtextblocker">
+    package="com.example.feeling.spamsmsblocker">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.feeling.spamsmsblocker.MainActivity"
             android:screenOrientation="fullSensor"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
@@ -34,32 +34,32 @@
         </activity>
 
         <activity
-            android:name=".ChatActivity"
-            android:parentActivityName=".MainActivity">
+            android:name="com.example.feeling.spamsmsblocker.ChatActivity"
+            android:parentActivityName="com.example.feeling.spamsmsblocker.MainActivity">
         </activity>
 
         <activity
-            android:name=".AllowlistActivity"
-            android:parentActivityName=".MainActivity">
+            android:name="com.example.feeling.spamsmsblocker.AllowlistActivity"
+            android:parentActivityName="com.example.feeling.spamsmsblocker.MainActivity">
         </activity>
 
         <activity
-            android:name=".BlacklistActivity"
-            android:parentActivityName=".MainActivity">
+            android:name="com.example.feeling.spamsmsblocker.BlacklistActivity"
+            android:parentActivityName="com.example.feeling.spamsmsblocker.MainActivity">
         </activity>
 
         <activity
-            android:name=".BlockedSmsActivity"
-            android:parentActivityName=".MainActivity">
+            android:name="com.example.feeling.spamsmsblocker.BlockedSmsActivity"
+            android:parentActivityName="com.example.feeling.spamsmsblocker.MainActivity">
         </activity>
 
         <activity
-            android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity">
+            android:name="com.example.feeling.spamsmsblocker.SettingsActivity"
+            android:parentActivityName="com.example.feeling.spamsmsblocker.MainActivity">
         </activity>
 
         <!-- BroadcastReceiver that listens for incoming SMS messages -->
-        <receiver android:name=".receivers.SmsReceiver"
+        <receiver android:name="com.example.feeling.spamsmsblocker.receivers.SmsReceiver"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
@@ -67,7 +67,7 @@
         </receiver>
 
         <!-- BroadcastReceiver that listens for incoming MMS messages -->
-        <receiver android:name=".receivers.MmsReceiver"
+        <receiver android:name="com.example.feeling.spamsmsblocker.receivers.MmsReceiver"
             android:permission="android.permission.BROADCAST_WAP_PUSH">
             <intent-filter>
                 <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
@@ -76,8 +76,8 @@
         </receiver>
 
         <!-- Activity that allows the user to send new SMS/MMS messages -->
-        <activity android:name=".ComposeSmsActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name="com.example.feeling.spamsmsblocker.ComposeSmsActivity"
+            android:parentActivityName="com.example.feeling.spamsmsblocker.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SENDTO" />
@@ -91,7 +91,7 @@
         </activity>
 
         <!-- Service that delivers messages from the phone "quick response" -->
-        <service android:name=".HeadlessSmsSendService"
+        <service android:name="com.example.feeling.spamsmsblocker.HeadlessSmsSendService"
             android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE"
             android:exported="true" >
             <intent-filter>

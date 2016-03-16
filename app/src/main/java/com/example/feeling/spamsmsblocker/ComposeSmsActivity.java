@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker;
+package com.example.feeling.spamsmsblocker;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,16 +11,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.example.feeling.spamtextblocker.database.DatabaseHelper;
-import com.example.feeling.spamtextblocker.models.Message;
+import com.example.feeling.spamsmsblocker.database.DatabaseHelper;
+import com.example.feeling.spamsmsblocker.models.Message;
 
 /**
  * Created by feeling on 3/1/16.
  */
 public class ComposeSmsActivity extends AppCompatActivity {
     public static final String TAG = "ComposeSmsActivity";
+    public String title = "Compose";
+
     static DatabaseHelper dbHelper;
-    ImageButton sendSmsButton;
+    ImageButton sendButton;
     EditText phoneNoText;
     EditText messageText;
     boolean phoneOK;
@@ -31,11 +33,11 @@ public class ComposeSmsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
 
-        setTitle("Compose");
+        setTitle(title);
         dbHelper = new DatabaseHelper(this);
 
-        sendSmsButton = (ImageButton) findViewById(R.id.sendSmsButton);
-        sendSmsButton.setEnabled(false);
+        sendButton = (ImageButton) findViewById(R.id.sendButton);
+        sendButton.setEnabled(false);
         phoneNoText = (EditText) findViewById(R.id.editTextPhoneNo);
         phoneNoText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -71,10 +73,14 @@ public class ComposeSmsActivity extends AppCompatActivity {
     private void checkPhoneNoLength() {
         if (phoneNoText.getText().toString().length() > 0) {
             phoneOK = true;
-            sendSmsButton.setEnabled(msgOK);
+            sendButton.setEnabled(msgOK);
+            if (msgOK) {
+                sendButton.setBackgroundResource(R.drawable.send_enabled);
+            }
         } else {
             phoneOK = false;
-            sendSmsButton.setEnabled(false);
+            sendButton.setEnabled(false);
+            sendButton.setBackgroundResource(R.drawable.send_disabled);
         }
     }
 
@@ -85,10 +91,14 @@ public class ComposeSmsActivity extends AppCompatActivity {
     private void checkMessageLength() {
         if (messageText.getText().toString().length() > 0) {
             msgOK = true;
-            sendSmsButton.setEnabled(phoneOK && msgOK);
+            sendButton.setEnabled(phoneOK);
+            if (phoneOK) {
+                sendButton.setBackgroundResource(R.drawable.send_enabled);
+            }
         } else {
             msgOK = false;
-            sendSmsButton.setEnabled(false);
+            sendButton.setEnabled(false);
+            sendButton.setBackgroundResource(R.drawable.send_disabled);
         }
     }
 

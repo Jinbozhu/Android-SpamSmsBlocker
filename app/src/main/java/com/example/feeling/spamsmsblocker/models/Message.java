@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker.models;
+package com.example.feeling.spamsmsblocker.models;
 
 /*
 Copyright 2014 Scott Logic Ltd
@@ -15,8 +15,6 @@ Copyright 2014 Scott Logic Ltd
         See the License for the specific language governing permissions and
         limitations under the License.
 */
-
-import java.util.Date;
 
 /**
  * Created by sdavies on 09/01/2014.

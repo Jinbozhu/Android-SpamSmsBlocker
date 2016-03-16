@@ -1,9 +1,7 @@
-package com.example.feeling.spamtextblocker.adapters;
+package com.example.feeling.spamsmsblocker.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.format.DateFormat;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.feeling.spamtextblocker.R;
-import com.example.feeling.spamtextblocker.models.Contact;
-import com.example.feeling.spamtextblocker.models.Message;
+import com.example.feeling.spamsmsblocker.R;
+import com.example.feeling.spamsmsblocker.models.Contact;
 
-import java.util.Date;
 import java.util.List;
 
 /**

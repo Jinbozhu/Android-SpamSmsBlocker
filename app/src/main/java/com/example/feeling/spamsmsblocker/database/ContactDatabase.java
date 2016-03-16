@@ -1,10 +1,9 @@
-package com.example.feeling.spamtextblocker.database;
+package com.example.feeling.spamsmsblocker.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 
-import com.example.feeling.spamtextblocker.models.Contact;
-import com.example.feeling.spamtextblocker.models.Message;
+import com.example.feeling.spamsmsblocker.models.Contact;
 
 import java.util.ArrayList;
 import java.util.List;

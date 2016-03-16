@@ -40,11 +40,11 @@
         android:layout_marginEnd="6dp"/>
 
     <ImageButton
-        android:id="@+id/sendSmsButton"
+        android:id="@+id/sendButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="right"
-        android:background="@drawable/ic_send"
+        android:background="@drawable/send_disabled"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -61,11 +61,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/sendSmsButton"
-        android:layout_toStartOf="@+id/sendSmsButton"
+        android:layout_toLeftOf="@+id/sendButton"
+        android:layout_toStartOf="@+id/sendButton"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"/>
-
-
 
 </RelativeLayout>

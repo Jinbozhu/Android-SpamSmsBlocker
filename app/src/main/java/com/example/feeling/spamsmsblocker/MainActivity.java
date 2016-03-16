@@ -1,4 +1,4 @@
-package com.example.feeling.spamtextblocker;
+package com.example.feeling.spamsmsblocker;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -25,10 +25,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.feeling.spamtextblocker.adapters.ChatAdapter;
-import com.example.feeling.spamtextblocker.adapters.ConversationAdapter;
-import com.example.feeling.spamtextblocker.database.DatabaseHelper;
-import com.example.feeling.spamtextblocker.models.Message;
+import com.example.feeling.spamsmsblocker.adapters.ChatAdapter;
+import com.example.feeling.spamsmsblocker.adapters.ConversationAdapter;
+import com.example.feeling.spamsmsblocker.database.DatabaseHelper;
+import com.example.feeling.spamsmsblocker.models.Message;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ScrollDirectionListener;
 
