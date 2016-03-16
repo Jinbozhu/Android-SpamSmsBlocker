@@ -263,6 +263,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     private void processMarkAllRead() {
         dbHelper.markAllSmsInInboxRead();
         Log.i(TAG, "All messages are marked as read.");
+        loadSmsFromDatabase();
     }
 
     private void deleteAll() {
