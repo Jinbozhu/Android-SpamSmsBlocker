@@ -34,35 +34,27 @@ import java.util.Set;
 public class SmsReceiver extends BroadcastReceiver {
     final String TAG = "SmsReceiver";
     DatabaseHelper dbHelper;
-    SQLiteDatabase db;
 
     Set<String> blackList;
     Set<String> allowList;
 
-    public SmsReceiver() {
-        blackList = new HashSet<>();
-        allowList = new HashSet<>();
-    }
-
-    private void loadBlockListFromDataBase() {
-
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
+        blackList = new HashSet<>();
+        allowList = new HashSet<>();
+
         dbHelper = new DatabaseHelper(context);
         blackList = dbHelper.getBlockedPhone();
-        db = dbHelper.getWritableDatabase();
 
 //        loadBlockListFromDataBase(context);
 //        loadAllowListFromPhone(context);
 
-        Bundle bundle = intent.getExtras();
+        String sender;
+        String content;
+        long timeMillis;
+        boolean isSpam;
 
-        String sender = "";
-        String content = "";
-        long timeMillis = 0;
-        String time = "";
+        Bundle bundle = intent.getExtras();
 
         try {
             if (bundle != null) {
@@ -76,11 +68,12 @@ public class SmsReceiver extends BroadcastReceiver {
                     sender = currentMessage.getDisplayOriginatingAddress();
                     timeMillis = currentMessage.getTimestampMillis();
 
-                    boolean isSpam = blackList.contains(sender);
+                    // Check if the sender is in the blacklist or not.
+                    isSpam = blackList.contains(sender);
                     Log.i(TAG, "is spam: " + isSpam);
 
                     Date date = new Date(timeMillis);
-                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
+                    SimpleDateFormat format = new SimpleDateFormat("MM/dd/yy");
                     String dateText = format.format(date);
 
                     msg += sender + " at " + dateText + "\n" + content + "\n";
@@ -90,7 +83,7 @@ public class SmsReceiver extends BroadcastReceiver {
 //                    insertSmsToDataBase(context, message);
 
                     // Insert operation returns the id of the inserted row.
-                    // If it fails, it will return -1.
+                    // Return -1 if it fails.
                     long id = dbHelper.insertSms(message);
                     if (id == -1) {
                         Log.i(TAG, "Insert sms to database failed.");
@@ -100,9 +93,8 @@ public class SmsReceiver extends BroadcastReceiver {
 //                        Toast.makeText(context, "sms is inserted.", Toast.LENGTH_SHORT).show();
                     }
 
-                    // Assign the id in the database to the "id" field
-                    // so that when I want to delete a message, I can
-                    // find it using the id of the message.
+                    // Assign the id in the database to the "id" field so that when I
+                    // want to delete a message, I can find it by the id of this message.
                     message.setId(id);
 //                    Toast.makeText(context, String.valueOf(message.getId()), Toast.LENGTH_SHORT).show();
 
@@ -132,13 +124,12 @@ public class SmsReceiver extends BroadcastReceiver {
                         dbHelper.insertPhone(sender);
                     }
                 }
-
-                dbHelper.closeDB();         // need to close DB
             }
         } catch (Exception e) {
             Log.e("SmsReceiver", "Exception: " + e.getMessage());
             e.printStackTrace();
         }
+        dbHelper.closeDB();
 //        notify(context, sender, content);
     }
 

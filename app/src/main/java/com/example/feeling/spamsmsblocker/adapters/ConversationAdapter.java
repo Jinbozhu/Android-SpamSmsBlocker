@@ -73,7 +73,6 @@ public class ConversationAdapter extends ArrayAdapter<Message> {
         // If message is not read, set font to bold.
         if (!msg.isRead()) {
             msgText.setTypeface(null, Typeface.BOLD);
-            contact.setTypeface(null, Typeface.BOLD);
             time.setTypeface(null, Typeface.BOLD);
         }
 

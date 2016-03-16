@@ -49,9 +49,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
     private ListView drawerListView;
     private ArrayAdapter<String> drawerAdapter;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
-    private String mActivityTitle = "Message";
+    private ActionBarDrawerToggle drawerToggle;
+    private DrawerLayout drawerLayout;
+    private String title = "Message";
 
     public static List<Message> convArrayList;
     public static ArrayAdapter convAdapter;
@@ -62,19 +62,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle(mActivityTitle);
+        setTitle(title);
 
         dbHelper = new DatabaseHelper(this);
 
+        // Navigation drawer setup.
         drawerListView = (ListView) findViewById(R.id.navList);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         addDrawerItems();
         setupDrawer();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        // Initialize chatArrayList and chatAdapter here to avoid nullPointerException
+        // when call them in other activities.
         ChatActivity.chatArrayList = new ArrayList<>();
         ChatActivity.chatAdapter = new ChatAdapter(getApplicationContext(),
                 R.layout.chat_list_elemnt, ChatActivity.chatArrayList);
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
             }
         });
 
+        // Initialize floating action button and attach to list view.
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.attachToListView(convListView, new ScrollDirectionListener() {
             @Override
@@ -128,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
     public void loadSmsFromDatabase() {
         convArrayList.clear();
+        Log.i(TAG, "load Sms From Database");
+
         List<Message> allSms = dbHelper.getLastSmsForNumbersExceptBlocked();
 
         for (int i = allSms.size() - 1; i >= 0; i--) {
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     }
 
     private void setupDrawer() {
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
 
             /** Called when a drawer has settled in a completely open state. */
@@ -184,26 +189,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(mActivityTitle);
+                getSupportActionBar().setTitle(title);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
 
-        mDrawerToggle.setDrawerIndicatorEnabled(true);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.setDrawerListener(drawerToggle);
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+        drawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -232,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         }
 
         // Activate the navigation drawer toggle
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
@@ -474,6 +479,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
         // show it
         alertDialog.show();
+
+        loadSmsFromDatabase();
     }
 
     private void addToBlacklist(final int index) {
