@@ -118,7 +118,7 @@ public class AllowlistActivity extends AppCompatActivity {
 
         // set dialog message
         alertDialogBuilder
-                .setTitle(R.string.create_contact)
+                .setTitle(R.string.edit_contact)
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {

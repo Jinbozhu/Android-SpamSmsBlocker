@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
     public void loadSmsFromDatabase() {
         convArrayList.clear();
+        convAdapter.notifyDataSetChanged();
         Log.i(TAG, "load Sms From Database");
 
         List<Message> allSms = dbHelper.getLastSmsForNumbersExceptBlocked();
@@ -314,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         if (!Telephony.Sms.getDefaultSmsPackage(this).equals(myPackageName)) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.not_default_app)
-                    .setMessage("This is not your default SMS app. Set as your default app?")
+                    .setMessage("This is not your default SMS app. Set as default app?")
                     .setPositiveButton(R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
@@ -480,13 +481,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         // show it
         alertDialog.show();
 
+        convAdapter.clear();
+        convAdapter.notifyDataSetChanged();
         loadSmsFromDatabase();
     }
 
     private void addToBlacklist(final int index) {
+        // Display name or phoneNumber of the contact to be blocked.
+        String phoneNumber = convArrayList.get(index).getSender();
+        if ("ME".equals(phoneNumber)) {
+            phoneNumber = convArrayList.get(index).getRecipient();
+        }
+        String name = dbHelper.getNameFromContact(phoneNumber);
+
         new AlertDialog.Builder(this)
                 .setTitle(R.string.add_to_blacklist)
-                .setMessage("Add this contact to blacklist?")
+                .setMessage("Add " + name + " to blacklist?")
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,
@@ -516,7 +526,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
             // This number is not in the contact book, insert it
             // and mark it as blocked.
             long insertId = dbHelper.insertContact(phoneNumber, false);
-            // Every time a contact is inserted, update the phone table.
+            // Every time a contact is inserted, update the contactId in phone table.
             dbHelper.updatePhone(phoneNumber, insertId);
         } else if (contactId == -1) {
             Toast.makeText(this, "The phone number is not in the table.", Toast.LENGTH_SHORT).show();

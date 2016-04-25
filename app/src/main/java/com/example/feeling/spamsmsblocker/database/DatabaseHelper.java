@@ -35,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SMS_COL_SENDER = "sender";
     public static final String SMS_COL_CONTENT = "content";
     public static final String SMS_COL_RECIPIENT = "recipient";
-    public static final String SMS_COL_TIME = "time";
+    public static final String SMS_COL_TIME = "timestamp";
     public static final String SMS_COL_IS_DELIVERED = "isDelivered";
     public static final String SMS_COL_IS_READ = "isRead";
     public static final String SMS_COL_IS_SPAM = "isSpam";
