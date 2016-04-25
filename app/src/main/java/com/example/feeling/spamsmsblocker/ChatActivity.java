@@ -130,11 +130,14 @@ public class ChatActivity extends AppCompatActivity {
         if (content.length() > 0) {
             try {
                 if (android.os.Build.VERSION.SDK_INT < 11) {
-                    android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    android.text.ClipboardManager clipboard =
+                            (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboard.setText(content);
                 } else {
-                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    android.content.ClipData clip = android.content.ClipData.newPlainText("WordKeeper", content);
+                    android.content.ClipboardManager clipboard =
+                            (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip =
+                            android.content.ClipData.newPlainText("WordKeeper", content);
                     clipboard.setPrimaryClip(clip);
                 }
                 Toast.makeText(getApplicationContext(), "Text copied to clipboard.", Toast.LENGTH_SHORT).show();

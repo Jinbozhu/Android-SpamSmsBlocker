@@ -2,7 +2,7 @@ Android App: Spam SMS Blocker
 ==========
 This is an Android app that can replace the original messaging app to send, receive and block unwanted messages.
 
-Messages, contacts and phone numbers are maintained in SQLite database. A field in the phone number table is used to mark if a phone number is in the blacklist or not. If it's in the blacklist, it will be blocked, otherwise it will get through.
+Messages, contacts and phone numbers are maintained in SQLite database. A column in the contacts table is used to mark if a contact is in the blacklist or not. If it's in the blacklist, it will be blocked, otherwise it will get through.
 Functionalities:
 - Delete a message
 - Delete a conversation thread

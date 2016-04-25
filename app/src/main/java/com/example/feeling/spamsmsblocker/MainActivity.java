@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
@@ -65,6 +66,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         setTitle(title);
 
         dbHelper = new DatabaseHelper(this);
+        // Used to drop tables
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        dbHelper.onUpgrade(db, 0, 1);
+//        db.close();
 
         // Navigation drawer setup.
         drawerListView = (ListView) findViewById(R.id.navList);
